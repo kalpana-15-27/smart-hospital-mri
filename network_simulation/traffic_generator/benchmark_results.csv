@@ -1,0 +1,6 @@
+Congestion_Load_Mbps,FIFO_Emergency_Transfer_Sec,QoS_Emergency_Transfer_Sec,FIFO_Latency_ms,QoS_Emergency_Latency_ms,FIFO_Loss_Pct,QoS_Emergency_Loss_Pct,QoS_Normal_Loss_Pct
+0,4.5,4.1,12.2,8.1,0.0,0.0,0.0
+25,7.8,4.2,24.5,8.4,0.2,0.0,0.1
+50,16.4,4.4,58.6,8.9,3.1,0.0,1.2
+75,38.2,4.8,134.8,9.6,11.8,0.0,4.5
+90,76.5,5.4,248.5,10.8,24.6,0.0,9.8

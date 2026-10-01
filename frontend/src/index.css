@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans selection:bg-sky-500 selection:text-white;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Pulse animation for Emergency status */
+@keyframes emergency-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.9);
+  }
+}
+
+.emergency-glow {
+  animation: emergency-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
