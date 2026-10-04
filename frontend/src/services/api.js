@@ -15,27 +15,53 @@ async function fetchWithAuth(url, options = {}) {
 
   if (!response.ok) {
     let errorDetail = 'API request failed';
+    let rawJson = null;
     try {
-      const errJson = await response.json();
-      errorDetail = errJson.detail || JSON.stringify(errJson);
+      rawJson = await response.json();
+      errorDetail = rawJson.detail || JSON.stringify(rawJson);
     } catch (e) {
       errorDetail = response.statusText;
     }
-    throw new Error(errorDetail);
+    const message = typeof errorDetail === 'string' ? errorDetail : (errorDetail?.message || JSON.stringify(errorDetail));
+    const err = new Error(message);
+    err.status = response.status;
+    err.detail = rawJson?.detail || errorDetail;
+    throw err;
   }
 
   return response.json();
 }
 
 export const api = {
-  // Auth
+  // Auth & Admin
   login: (username, password) => 
     fetchWithAuth('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ username, password })
     }),
+  changePassword: (old_password, new_password, username) =>
+    fetchWithAuth('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ old_password, new_password, username })
+    }),
+  adminCreateDoctor: (data) =>
+    fetchWithAuth('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
   getCurrentUser: () => fetchWithAuth('/auth/me'),
   getUsers: () => fetchWithAuth('/auth/users'),
+  submitAccessRequest: (data) =>
+    fetchWithAuth('/admin/access-requests', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+  getAccessRequests: () => fetchWithAuth('/admin/access-requests'),
+  reviewAccessRequest: (id, action, notes) =>
+    fetchWithAuth(`/admin/access-requests/${id}/action`, {
+      method: 'POST',
+      body: JSON.stringify({ action, notes })
+    }),
 
   // Patients
   getPatients: () => fetchWithAuth('/patients'),

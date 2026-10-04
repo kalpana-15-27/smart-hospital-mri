@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -12,8 +12,9 @@ class User(Base):
     role = Column(String(30), nullable=False)  # ADMIN, DOCTOR, RADIOLOGIST, NETWORK_ADMIN
     full_name = Column(String(100), nullable=False)
     department = Column(String(100), nullable=False)
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    is_active = Column(Boolean, default=True, nullable=False)
+    requires_password_change = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
     mri_requests = relationship("MRIRequest", back_populates="creator")
     audit_logs = relationship("AuditLog", back_populates="user")
@@ -29,11 +30,11 @@ class Patient(Base):
     gender = Column(String(10), nullable=False)
     department = Column(String(100), nullable=False)
     doctor_name = Column(String(100), nullable=False)
-    triage_level = Column(String(20), default="Standard")  # Emergency, Urgent, Standard
+    triage_level = Column(String(20), default="Standard", nullable=False)  # Emergency, Urgent, Standard
     vitals_summary = Column(String(255), nullable=True)
-    admission_time = Column(DateTime, default=datetime.utcnow)
+    admission_time = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
-    mri_requests = relationship("MRIRequest", back_populates="patient")
+    mri_requests = relationship("MRIRequest", back_populates="patient", cascade="all, delete-orphan")
 
 
 class MRIRequest(Base):
@@ -48,7 +49,7 @@ class MRIRequest(Base):
     
     # Layer 3 / QoS Metadata
     source_ip = Column(String(45), nullable=False)
-    dest_ip = Column(String(45), default="192.168.30.10")  # PACS Server IP
+    dest_ip = Column(String(45), default="192.168.30.10", nullable=False)  # PACS Server IP
     dscp_value = Column(Integer, nullable=False)  # 46, 34, 0
     dscp_name = Column(String(20), nullable=False)  # EF, AF41, CS0
     dscp_binary = Column(String(10), nullable=False)  # 101110, 100010, 000000
@@ -56,18 +57,18 @@ class MRIRequest(Base):
     queue_assigned = Column(String(30), nullable=False)  # Strict Priority Queue, Assured Queue, Best Effort Queue
     
     # Study & Transfer simulation metrics
-    image_size_mb = Column(Float, default=250.0)  # Standard high-res MRI study volume in MB
-    status = Column(String(30), default="QUEUED")  # QUEUED, TRANSMITTING, COMPLETED, FAILED
-    estimated_transfer_sec = Column(Float, default=0.0)
-    actual_transfer_sec = Column(Float, default=0.0)
-    latency_ms = Column(Float, default=0.0)
-    packet_loss_pct = Column(Float, default=0.0)
-    throughput_mbps = Column(Float, default=0.0)
+    image_size_mb = Column(Float, default=250.0, nullable=False)
+    status = Column(String(30), default="QUEUED", nullable=False)  # QUEUED, TRANSMITTING, COMPLETED, FAILED
+    estimated_transfer_sec = Column(Float, default=0.0, nullable=False)
+    actual_transfer_sec = Column(Float, default=0.0, nullable=False)
+    latency_ms = Column(Float, default=0.0, nullable=False)
+    packet_loss_pct = Column(Float, default=0.0, nullable=False)
+    throughput_mbps = Column(Float, default=0.0, nullable=False)
     
     # Metadata
     created_by_user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    processed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    processed_at = Column(DateTime(timezone=True), nullable=True)
 
     patient = relationship("Patient", back_populates="mri_requests")
     creator = relationship("User", back_populates="mri_requests")
@@ -83,7 +84,7 @@ class NetworkDevice(Base):
     vlan_id = Column(Integer, nullable=False)
     vlan_name = Column(String(50), nullable=False)
     device_type = Column(String(50), nullable=False)  # Workstation, Server, Router, Switch
-    is_trusted = Column(Boolean, default=True)
+    is_trusted = Column(Boolean, default=True, nullable=False)
     description = Column(String(255), nullable=True)
 
 
@@ -91,7 +92,7 @@ class QoSEvent(Base):
     __tablename__ = "qos_events"
 
     id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     request_id = Column(String(40), nullable=True)
     event_type = Column(String(50), nullable=False)  # CLASSIFICATION, MARKING, SPOOF_DETECTED, QUEUED, FORWARDED
     source_ip = Column(String(45), nullable=False)
@@ -99,7 +100,7 @@ class QoSEvent(Base):
     dscp_marked = Column(Integer, nullable=False)
     queue_assigned = Column(String(50), nullable=False)
     action_taken = Column(String(100), nullable=False)
-    is_spoofed_attempt = Column(Boolean, default=False)
+    is_spoofed_attempt = Column(Boolean, default=False, nullable=False)
     details = Column(Text, nullable=True)
 
 
@@ -107,7 +108,7 @@ class NetworkMetric(Base):
     __tablename__ = "network_metrics"
 
     id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     scenario = Column(String(50), nullable=False)  # FIFO_BEST_EFFORT vs QOS_PRIORITY
     background_traffic_mbps = Column(Float, nullable=False)
     latency_ms = Column(Float, nullable=False)
@@ -116,19 +117,34 @@ class NetworkMetric(Base):
     packet_loss_pct = Column(Float, nullable=False)
     emergency_wait_sec = Column(Float, nullable=False)
     normal_wait_sec = Column(Float, nullable=False)
-    queue_depth = Column(Integer, default=0)
+    queue_depth = Column(Integer, default=0, nullable=False)
 
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     username = Column(String(50), nullable=False)
     action = Column(String(100), nullable=False)
     ip_address = Column(String(45), nullable=False)
     details = Column(Text, nullable=True)
-    status = Column(String(20), default="SUCCESS")  # SUCCESS, WARNING, ALERT, DENIED
+    status = Column(String(20), default="SUCCESS", nullable=False)  # SUCCESS, WARNING, ALERT, DENIED
 
     user = relationship("User", back_populates="audit_logs")
+
+
+class AccessRequest(Base):
+    __tablename__ = "access_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    full_name = Column(String(100), nullable=False)
+    department = Column(String(100), nullable=False)
+    email = Column(String(100), nullable=False)
+    staff_id = Column(String(50), nullable=False)
+    status = Column(String(20), default="PENDING", nullable=False)  # PENDING, APPROVED, REJECTED
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    reviewed_by = Column(String(50), nullable=True)
+    notes = Column(String(255), nullable=True)

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
 from .database import engine, Base, SessionLocal
 from .models import User, Patient, MRIRequest, NetworkDevice, QoSEvent, NetworkMetric, AuditLog
@@ -22,31 +22,48 @@ def init_seed_db(db: Session = None):
         users = [
             User(
                 username="dr_sharma",
-                hashed_password=hash_password("password123"),
+                hashed_password=hash_password("sarah@15"),
                 role="DOCTOR",
                 full_name="Dr. Sarah Sharma, MD",
-                department="Emergency Medicine & Trauma Center"
+                department="Emergency Medicine & Trauma Center",
+                requires_password_change=False,
+                created_at=datetime.now(timezone.utc)
             ),
             User(
                 username="dr_patel",
-                hashed_password=hash_password("password123"),
+                hashed_password=hash_password("rajesh@15"),
                 role="RADIOLOGIST",
                 full_name="Dr. Rajesh Patel, MD, FRCR",
-                department="Diagnostic Radiology & Neuroradiology"
+                department="Diagnostic Radiology & Neuroradiology",
+                requires_password_change=False,
+                created_at=datetime.now(timezone.utc)
             ),
             User(
                 username="netadmin_kumar",
-                hashed_password=hash_password("password123"),
+                hashed_password=hash_password("anand@15"),
                 role="NETWORK_ADMIN",
                 full_name="Anand Kumar, CCNP",
-                department="Clinical IT & Healthcare Networks"
+                department="Clinical IT & Healthcare Networks",
+                requires_password_change=False,
+                created_at=datetime.now(timezone.utc)
+            ),
+            User(
+                username="admin1",
+                hashed_password=hash_password("kalp1524"),
+                role="ADMIN",
+                full_name="Hospital Administrator",
+                department="Hospital Operations & Governance",
+                requires_password_change=False,
+                created_at=datetime.now(timezone.utc)
             ),
             User(
                 username="admin_dave",
-                hashed_password=hash_password("password123"),
+                hashed_password=hash_password("dave@15"),
                 role="ADMIN",
                 full_name="Hospital Systems Administrator",
-                department="Hospital Operations & Governance"
+                department="Hospital Operations & Governance",
+                requires_password_change=False,
+                created_at=datetime.now(timezone.utc)
             ),
         ]
         db.add_all(users)
@@ -195,7 +212,7 @@ def init_seed_db(db: Session = None):
         p4 = db.query(Patient).filter(Patient.patient_id == "PAT-2026-004").first()
 
         # 4. Seed Initial MRI Requests
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         mri_requests = [
             MRIRequest(
                 request_id="MRI-REQ-2026-001",

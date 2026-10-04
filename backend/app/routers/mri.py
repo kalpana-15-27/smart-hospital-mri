@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import case
@@ -62,7 +62,7 @@ def create_mri_request(
         packet_loss_pct=0.0,
         throughput_mbps=0.0,
         created_by_user_id=current_user.id,
-        created_at=datetime.utcnow()
+        created_at=datetime.now(timezone.utc)
     )
     db.add(mri_request)
     db.commit()
@@ -75,7 +75,8 @@ def create_mri_request(
         action="MRI_ORDER_SUBMITTED",
         ip_address=source_ip,
         details=f"Ordered {mri_request.mri_type} for patient {patient.name} ({patient.patient_id}). Urgency: {mri_request.urgency}, DSCP: {mri_request.dscp_name} ({mri_request.dscp_value}), Queue: {mri_request.queue_assigned}.",
-        status="SUCCESS"
+        status="SUCCESS",
+        timestamp=datetime.now(timezone.utc)
     )
     db.add(audit)
     db.commit()

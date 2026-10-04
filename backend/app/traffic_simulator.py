@@ -14,7 +14,7 @@ import time
 import math
 import random
 import socket
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any
 from sqlalchemy.orm import Session
 from .models import MRIRequest, NetworkMetric, QoSEvent
@@ -115,7 +115,7 @@ class NetworkSimulator:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             tos_byte = (dscp_value << 2) & 0xFC  # 6-bit DSCP into top 6 bits of ToS
             sock.setsockopt(socket.IPPROTO_IP, socket.IP_TOS, tos_byte)
-            payload = f"DICOM_PRIORITY_PROBE:DSCP={dscp_value}:TIMESTAMP={datetime.utcnow().isoformat()}".encode('utf-8')
+            payload = f"DICOM_PRIORITY_PROBE:DSCP={dscp_value}:TIMESTAMP={datetime.now(timezone.utc).isoformat()}".encode('utf-8')
             sock.sendto(payload, (dest_ip if dest_ip != "192.168.30.10" else "127.0.0.1", port))
             sock.close()
             return True
@@ -156,7 +156,7 @@ class NetworkSimulator:
         mri_request.actual_transfer_sec = metrics["transfer_time_sec"]
         mri_request.estimated_transfer_sec = round(mri_request.image_size_mb * 8.0 / 100.0, 2)
         mri_request.status = "COMPLETED"
-        mri_request.processed_at = datetime.utcnow()
+        mri_request.processed_at = datetime.now(timezone.utc)
 
         # Record system telemetry for graphing
         scenario_label = "QOS_PRIORITY" if enable_qos else "FIFO_BEST_EFFORT"

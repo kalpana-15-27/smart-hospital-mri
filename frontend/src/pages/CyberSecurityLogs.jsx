@@ -9,7 +9,10 @@ import {
   CheckCircle2, 
   AlertTriangle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Terminal,
+  Lock,
+  Shield
 } from 'lucide-react';
 
 export default function CyberSecurityLogs() {
@@ -48,7 +51,7 @@ export default function CyberSecurityLogs() {
   const FAQS = [
     {
       q: "Does an IP address itself create network priority?",
-      a: "No. The IP address identifies the device and its VLAN. The priority is carried inside the IPv4 header's DSCP field (bits 0-5), and enforced by the router's hardware queues."
+      a: "No. The IP address identifies the device and its trusted VLAN boundary. Priority is carried inside the IPv4 header's DSCP field (bits 0-5), and enforced by the router's hardware queues."
     },
     {
       q: "What prevents normal hospital traffic from starving?",
@@ -68,43 +71,47 @@ export default function CyberSecurityLogs() {
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-        <div>
-          <h1 className="text-xl font-bold text-white flex items-center space-x-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            <span>Security Defense & Project Guide</span>
-          </h1>
-          <p className="text-xs text-slate-400">
-            Testing edge anti-spoofing defense and reviewing examiner defense points.
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-blue-950 tracking-tight">
+              Security Defense & Examiner Guide
+            </h1>
+            <p className="text-xs text-blue-700/70">
+              Validating edge trust boundaries, anti-spoofing defense, and viva defense topics
+            </p>
+          </div>
         </div>
 
         <button
           onClick={loadLogs}
-          className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold flex items-center space-x-1.5 self-start sm:self-auto transition"
+          className="px-5 py-2.5 bg-white border border-blue-200/80 text-blue-700 hover:text-blue-950 rounded-full text-xs font-bold flex items-center space-x-2 self-start sm:self-auto transition-all shadow-sm hover:shadow"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className="w-3.5 h-3.5 text-cyan-500" />
           <span>Refresh Logs</span>
         </button>
       </div>
 
-      {/* Hero: Anti-Spoofing Defense Simulator */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Hero: Anti-Spoofing Defense Simulator (Soft Glass Card) */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-blue-100 pb-4">
           <div className="space-y-1">
-            <div className="flex items-center space-x-2 text-rose-400 font-bold text-xs">
-              <ShieldAlert className="w-4 h-4" />
-              <span>Edge Trust Defense: Anti-DSCP Spoofing</span>
+            <div className="flex items-center space-x-2 text-rose-600 font-bold text-xs font-mono">
+              <ShieldAlert className="w-4 h-4 text-rose-500" />
+              <span>Edge Trust Boundary Defense: Anti-DSCP Spoofing</span>
             </div>
-            <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-              If an unauthorized device in the guest network attempts to inject fake <code className="text-rose-400 font-mono">DSCP 46 (Emergency)</code> packets to hog bandwidth, the edge router intercepts it, issues a security alert, and resets the tag to standard.
+            <p className="text-xs text-slate-500 max-w-2xl leading-relaxed">
+              If an unauthorized device in the guest network attempts to inject fake <code className="text-rose-600 font-mono font-bold">DSCP 46 (Emergency)</code> packets to hog bandwidth, the edge router intercepts it, issues a security alert, and resets the tag to standard.
             </p>
           </div>
 
           <button
             onClick={handleSimulateAttack}
             disabled={simulatingAttack}
-            className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-600/20 flex items-center space-x-2 transition flex-shrink-0"
+            className="px-6 py-3 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-full font-bold text-xs shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 flex items-center space-x-2 transition-all flex-shrink-0 disabled:opacity-50"
           >
             {simulatingAttack ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
             <span>{simulatingAttack ? 'Testing Defense...' : 'Test Rogue Priority Attack'}</span>
@@ -113,51 +120,59 @@ export default function CyberSecurityLogs() {
 
         {/* Attack Mitigation Feedback Card */}
         {attackResult && (
-          <div className="bg-emerald-950/30 border border-emerald-500/50 rounded-xl p-4 space-y-2 animate-fadeIn text-xs">
-            <div className="flex items-center space-x-2 text-emerald-400 font-bold">
-              <CheckCircle2 className="w-4 h-4" />
+          <div className="bg-emerald-50/90 border border-emerald-200 rounded-2xl p-5 space-y-2.5 animate-in fade-in duration-200 text-xs shadow-sm">
+            <div className="flex items-center space-x-2 text-emerald-800 font-bold">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               <span>Defense Succeeded: Attack Detected & Mitigated!</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px] pt-1">
-              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                <span className="text-slate-500">Rogue Device:</span> <span className="text-slate-200">{attackResult.source_ip}</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-[11px] pt-1">
+              <div className="bg-white/80 p-3 rounded-xl border border-emerald-100">
+                <span className="text-slate-400 block text-[10px]">Rogue Device IP:</span>
+                <span className="text-blue-950 font-bold">{attackResult.source_ip}</span>
               </div>
-              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                <span className="text-slate-500">Attempted Tag:</span> <span className="text-rose-400 font-bold">DSCP {attackResult.attempted_dscp}</span>
+              <div className="bg-white/80 p-3 rounded-xl border border-emerald-100">
+                <span className="text-slate-400 block text-[10px]">Attempted Unauthorized Tag:</span>
+                <span className="text-rose-600 font-bold">DSCP {attackResult.attempted_dscp}</span>
               </div>
-              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                <span className="text-slate-500">Enforced Action:</span> <span className="text-emerald-400 font-bold">Force-Reset to DSCP 0</span>
+              <div className="bg-white/80 p-3 rounded-xl border border-emerald-100">
+                <span className="text-slate-400 block text-[10px]">Enforced Edge Action:</span>
+                <span className="text-emerald-700 font-bold">Force-Reset to DSCP 0</span>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Examiner Viva Voce Cheat Sheet */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-        <h2 className="text-sm font-bold text-white flex items-center space-x-2">
-          <HelpCircle className="w-4 h-4 text-sky-400" />
-          <span>Examiner Q&A Cheat Sheet (Viva Defense)</span>
-        </h2>
+      {/* Examiner Viva Voce Cheat Sheet (Soft Glass Card) */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-4">
+        <div className="flex items-center justify-between border-b border-blue-100 pb-3">
+          <h2 className="text-xs font-bold text-blue-950 uppercase tracking-wider font-mono flex items-center space-x-2">
+            <HelpCircle className="w-4 h-4 text-cyan-600" />
+            <span>Examiner Q&A Cheat Sheet (Viva Voce Defense)</span>
+          </h2>
+          <span className="text-[10px] text-cyan-700 font-mono font-bold bg-cyan-50 px-2.5 py-0.5 rounded-full border border-cyan-200">
+            Academic Key Concepts
+          </span>
+        </div>
 
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2.5 text-xs">
           {FAQS.map((faq, idx) => (
             <div 
               key={idx}
-              className="bg-slate-950 rounded-xl border border-slate-800/80 overflow-hidden"
+              className="bg-blue-50/50 rounded-2xl border border-blue-100 overflow-hidden transition-all"
             >
               <button
                 onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                className="w-full p-3.5 text-left font-semibold text-slate-200 flex items-center justify-between hover:text-white transition"
+                className="w-full p-4 text-left font-semibold text-blue-950 flex items-center justify-between hover:text-cyan-700 transition"
               >
                 <span>{faq.q}</span>
-                {expandedFaq === idx ? <ChevronUp className="w-4 h-4 text-sky-400" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                {expandedFaq === idx ? <ChevronUp className="w-4 h-4 text-cyan-600" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
               </button>
 
               {expandedFaq === idx && (
-                <div className="px-3.5 pb-3.5 text-slate-400 leading-relaxed border-t border-slate-800/50 pt-2 text-[11px]">
-                  <strong className="text-emerald-400">Answer:</strong> {faq.a}
+                <div className="px-4 pb-4 text-slate-600 leading-relaxed border-t border-blue-100 pt-3 text-[11px] animate-in fade-in duration-150">
+                  <strong className="text-cyan-700 font-mono font-bold">Defense Answer: </strong> {faq.a}
                 </div>
               )}
             </div>
@@ -165,49 +180,61 @@ export default function CyberSecurityLogs() {
         </div>
       </div>
 
-      {/* Compact Audit Trail Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-        <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-          Recent Security & Priority Audit Trail
-        </h3>
+      {/* Security Audit Trail Table (Soft Glass Card) */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-4">
+        <div className="flex items-center justify-between border-b border-blue-100 pb-3">
+          <h3 className="text-xs font-bold text-blue-950 uppercase tracking-wider font-mono flex items-center space-x-2">
+            <Terminal className="w-4 h-4 text-cyan-600" />
+            <span>Security & Priority Audit Trail</span>
+          </h3>
+          <span className="text-[10px] text-slate-500 font-mono">Real-time syslog stream</span>
+        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 font-mono text-[10px] uppercase border-b border-slate-800">
+        <div className="overflow-x-auto rounded-2xl border border-blue-100">
+          <table className="w-full text-left text-xs font-mono">
+            <thead className="bg-blue-50/80 text-blue-900/70 font-mono text-[10px] uppercase border-b border-blue-100 tracking-wider">
               <tr>
-                <th className="py-2.5 px-3">Time</th>
-                <th className="py-2.5 px-3">User / Host</th>
-                <th className="py-2.5 px-3">Action</th>
-                <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3">Details</th>
+                <th className="py-3 px-3.5">Timestamp</th>
+                <th className="py-3 px-3.5">Host / Identity</th>
+                <th className="py-3 px-3.5">Action Event</th>
+                <th className="py-3 px-3.5">Defense State</th>
+                <th className="py-3 px-3.5">Diagnostic Details</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-sans text-xs">
-              {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-800/40">
-                  <td className="py-2 px-3 font-mono text-[10px] text-slate-400">
-                    {new Date(log.timestamp).toLocaleTimeString()}
-                  </td>
-                  <td className="py-2 px-3 font-mono font-medium text-slate-300">
-                    {log.username}
-                  </td>
-                  <td className="py-2 px-3 font-mono text-[11px] text-sky-300">
-                    {log.action}
-                  </td>
-                  <td className="py-2 px-3">
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold ${
-                      log.status === 'SUCCESS' ? 'bg-emerald-500/20 text-emerald-400' :
-                      log.status === 'ALERT' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
-                      'bg-amber-500/20 text-amber-400'
-                    }`}>
-                      {log.status}
-                    </span>
-                  </td>
-                  <td className="py-2 px-3 text-[11px] text-slate-400 truncate max-w-sm">
-                    {log.details}
-                  </td>
-                </tr>
-              ))}
+            <tbody className="divide-y divide-blue-50 font-sans text-xs">
+              {logs.map((log) => {
+                const isAlert = log.status === 'ALERT' || log.status === 'DENIED';
+                const isSuccess = log.status === 'SUCCESS';
+                return (
+                  <tr key={log.id} className="hover:bg-blue-50/60 transition-all">
+                    <td className="py-2.5 px-3.5 font-mono text-[10px] text-slate-500">
+                      {new Date(log.timestamp).toLocaleTimeString()}
+                    </td>
+                    <td className="py-2.5 px-3.5 font-mono font-medium text-blue-950">
+                      {log.username}
+                    </td>
+                    <td className="py-2.5 px-3.5 font-mono text-[11px] text-cyan-700 font-bold">
+                      {log.action}
+                    </td>
+                    <td className="py-2.5 px-3.5">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold inline-flex items-center space-x-1 ${
+                        isSuccess ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-sm' :
+                        isAlert ? 'bg-rose-100 text-rose-700 border border-rose-200 shadow-[0_0_8px_rgba(244,63,94,0.3)] animate-pulse' :
+                        'bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-[0_0_8px_rgba(99,102,241,0.25)]'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${
+                          isSuccess ? 'bg-emerald-500' :
+                          isAlert ? 'bg-rose-500' : 'bg-indigo-500'
+                        }`}></span>
+                        <span>{log.status}</span>
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3.5 text-[11px] text-slate-600 truncate max-w-sm font-mono">
+                      {log.details}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

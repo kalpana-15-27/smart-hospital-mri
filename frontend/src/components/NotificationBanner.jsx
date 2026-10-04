@@ -3,20 +3,20 @@ import { Zap, ShieldCheck } from 'lucide-react';
 
 export default function NotificationBanner() {
   return (
-    <div className="bg-slate-900/90 border-b border-slate-800 px-4 py-2 text-xs text-slate-300 flex items-center justify-between">
+    <div className="bg-white/70 backdrop-blur-md border-b border-blue-100 px-4 py-2 text-xs text-blue-900/80 flex items-center justify-between z-30">
       <div className="flex items-center space-x-2.5">
         <span className="flex h-2 w-2 relative">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
         </span>
-        <span className="font-semibold text-white">Emergency Fast-Lane System:</span>
-        <span className="text-emerald-400 font-medium">Active & Prioritizing Traffic</span>
-        <span className="text-slate-600 hidden sm:inline">•</span>
-        <span className="text-slate-400 hidden sm:inline">Priority Router: <code className="text-sky-300 font-mono">192.168.10.1</code></span>
+        <span className="font-bold text-blue-950">Emergency Fast-Lane System:</span>
+        <span className="text-cyan-700 font-semibold">Active & Prioritizing Traffic</span>
+        <span className="text-blue-300 hidden sm:inline">&bull;</span>
+        <span className="text-slate-500 hidden sm:inline">Priority Router: <code className="text-cyan-700 font-mono font-bold">192.168.10.1</code></span>
       </div>
       
-      <div className="hidden md:flex items-center space-x-2 text-[11px] text-slate-400">
-        <span className="bg-sky-500/10 text-sky-300 border border-sky-500/20 px-2 py-0.5 rounded font-mono">
+      <div className="hidden md:flex items-center space-x-2 text-[11px] text-slate-500">
+        <span className="bg-cyan-100 text-cyan-800 border border-cyan-200/80 px-2.5 py-0.5 rounded-full font-mono font-bold">
           Layer 3 IP QoS
         </span>
         <span>Network prioritization for medical imaging</span>

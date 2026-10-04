@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { 
-  Zap, 
+  Heart, 
   Clock, 
-  Send, 
+  Activity, 
+  Moon, 
   Sliders, 
+  Zap, 
+  CheckCircle2, 
   Layers, 
+  Send, 
+  RefreshCw, 
   PlusCircle, 
-  RefreshCw,
-  Activity,
-  CheckCircle2,
-  TrendingDown,
+  Thermometer,
+  ShieldCheck,
+  TrendingUp,
   ArrowRight
 } from 'lucide-react';
 
 export default function Dashboard({ setActiveTab, setSelectedPacket }) {
+  const { currentUser } = useAuth();
   const [stats, setStats] = useState(null);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +38,7 @@ export default function Dashboard({ setActiveTab, setSelectedPacket }) {
       setStats(statsData);
       setRequests(queueData);
     } catch (err) {
-      console.error('Failed to load data:', err);
+      console.error('Failed to load dashboard data:', err);
     } finally {
       setLoading(false);
     }
@@ -61,191 +67,306 @@ export default function Dashboard({ setActiveTab, setSelectedPacket }) {
     }
   };
 
-  const emergencyQueue = requests.filter(r => r.urgency === 'EMERGENCY');
-  const urgentQueue = requests.filter(r => r.urgency === 'URGENT');
-  const normalQueue = requests.filter(r => r.urgency === 'NORMAL');
+  const emergencyScans = requests.filter(r => r.urgency === 'EMERGENCY');
+  const urgentScans = requests.filter(r => r.urgency === 'URGENT');
+  const normalScans = requests.filter(r => r.urgency === 'NORMAL');
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return 'Good Morning';
+    if (hour >= 12 && hour < 17) return 'Good Afternoon';
+    if (hour >= 17 && hour < 22) return 'Good Evening';
+    return 'Good Night';
+  };
 
   return (
     <div className="space-y-6">
       
-      {/* Clean Top Header Card */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-sky-950/40 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center space-x-2">
-              <span>Hospital Imaging Traffic Control</span>
-            </h1>
-            <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
-              Prioritizing emergency medical scans over routine network traffic during peak hospital hours.
-            </p>
-          </div>
-
-          <div className="flex items-center space-x-2.5">
-            <button
-              onClick={() => setActiveTab('order')}
-              className="px-4 py-2.5 bg-gradient-to-r from-rose-600 to-red-500 hover:from-rose-500 hover:to-red-400 text-white font-semibold text-xs rounded-xl shadow-lg shadow-rose-600/20 flex items-center space-x-1.5 transition"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Order Emergency Scan</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('speedtest')}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl border border-slate-700 flex items-center space-x-1.5 transition"
-            >
-              <Zap className="w-4 h-4 text-sky-400" />
-              <span>Speed Test</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 4 Clean Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-            <span>Emergency Scans</span>
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-rose-400 font-mono">
-              {stats ? stats.active_emergency_count : 0} active
-            </div>
-            <div className="text-[11px] text-slate-400 mt-1">
-              Assigned to Fast Lane (DSCP 46)
-            </div>
-          </div>
+      {/* 1. Header with Greeting & Quick Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-blue-100">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-blue-950">
+            {getGreeting()}, <span className="text-cyan-600 font-extrabold">{currentUser ? (currentUser.name || currentUser.username) : 'Dr. Sarah Sharma'}!</span>
+          </h1>
+          <p className="text-xs text-blue-700/70 mt-0.5">
+            Hospital Emergency MRI Prioritization System &bull; Layer 3 IP-Based QoS Gateway
+          </p>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-            <span>Fast-Lane Speedup</span>
-            <TrendingDown className="w-4 h-4 text-emerald-400" />
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-emerald-400 font-mono">
-              93% Faster
-            </div>
-            <div className="text-[11px] text-slate-400 mt-1">
-              Avoids network traffic jams
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-            <span>Transfer Delay</span>
-            <Clock className="w-4 h-4 text-sky-400" />
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-sky-400 font-mono">
-              ~5.4s <span className="text-xs font-normal text-slate-500">vs 76s</span>
-            </div>
-            <div className="text-[11px] text-slate-400 mt-1">
-              Under 85% link congestion
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-            <span>Fast-Lane Latency</span>
-            <Activity className="w-4 h-4 text-purple-400" />
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-purple-400 font-mono">
-              {stats ? `${stats.current_latency_ms} ms` : '9.4 ms'}
-            </div>
-            <div className="text-[11px] text-slate-400 mt-1">
-              0% packet drop rate
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Interactive Controls Bar: Congestion Slider & Priority Toggle */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        
-        {/* Congestion Slider */}
-        <div className="flex-1 w-full space-y-1.5">
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-slate-300 font-medium flex items-center space-x-1.5">
-              <Sliders className="w-3.5 h-3.5 text-sky-400" />
-              <span>Simulate Hospital Network Congestion:</span>
-            </span>
-            <span className="font-mono font-bold text-sky-400 bg-sky-950 px-2 py-0.5 rounded border border-sky-800 text-[11px]">
-              {backgroundLoad}% Busy ({backgroundLoad} Mbps)
-            </span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="95"
-            step="5"
-            value={backgroundLoad}
-            onChange={(e) => setBackgroundLoad(parseFloat(e.target.value))}
-            className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-500"
-          />
-          <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-            <span>Quiet (0%)</span>
-            <span>Moderate (50%)</span>
-            <span>Heavy Congestion (95%)</span>
-          </div>
-        </div>
-
-        {/* Priority Toggle */}
-        <div className="flex items-center space-x-3 border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-5 self-stretch md:self-auto justify-between md:justify-start">
-          <div className="text-left">
-            <div className="text-xs font-semibold text-white">Priority Routing</div>
-            <div className="text-[10px] text-slate-400">
-              {enablePriority ? 'Fast Lane Active' : 'Normal (FIFO)'}
-            </div>
-          </div>
-
+        <div className="flex items-center space-x-3">
           <button
-            onClick={() => setEnablePriority(!enablePriority)}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-mono transition ${
-              enablePriority
-                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
-                : 'bg-slate-800 text-slate-400 border border-slate-700'
-            }`}
+            onClick={() => setActiveTab('order')}
+            className="px-5 py-2.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white rounded-full text-xs font-bold flex items-center space-x-2 transition-all shadow-md shadow-blue-500/25"
           >
-            {enablePriority ? 'ON' : 'OFF'}
+            <PlusCircle className="w-4 h-4" />
+            <span>Order Emergency Scan</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('speedtest')}
+            className="px-5 py-2.5 bg-white hover:bg-blue-50 border border-blue-200/80 text-blue-700 hover:text-blue-950 rounded-full text-xs font-bold flex items-center space-x-2 transition-all shadow-sm"
+          >
+            <Zap className="w-4 h-4 text-cyan-500" />
+            <span>Speed Benchmark</span>
           </button>
         </div>
+      </div>
 
+      {/* 2. Health & Network QoS Statistics (4 Soft Oceanic Glass Cards) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        {/* Card 1: MRI Throughput */}
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 flex flex-col justify-between h-36 relative overflow-hidden">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-medium">Heart Rate / Throughput</span>
+            <div className="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center">
+              <Heart className="w-4 h-4 fill-cyan-400/40" />
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-between my-1">
+            <div>
+              <span className="text-2xl font-bold text-blue-950 font-mono">76</span>
+              <span className="text-xs text-slate-400 ml-1">Mbps</span>
+            </div>
+
+            {/* Cyan ECG Polyline */}
+            <div className="w-20 h-8">
+              <svg className="w-full h-full" viewBox="0 0 70 28" fill="none">
+                <path 
+                  d="M 0 14 L 15 14 L 20 6 L 27 22 L 34 2 L 40 20 L 45 14 L 70 14" 
+                  stroke="#0284c7" 
+                  strokeWidth="2.4" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-cyan-700 font-bold">Normal Range</span>
+            <span className="text-slate-500 font-mono text-[10px]">Fast Lane (DSCP 46)</span>
+          </div>
+        </div>
+
+        {/* Card 2: Queue Load / Steps */}
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 flex flex-col justify-between h-36">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-medium">Steps / Queue Load</span>
+            <span className="text-[10px] text-cyan-700 font-mono font-bold bg-cyan-50 px-2 py-0.5 rounded-full">Target: 8k</span>
+          </div>
+
+          <div className="flex items-center justify-between my-1">
+            <div>
+              <div className="text-2xl font-bold text-blue-950 font-mono">6,432</div>
+              <div className="text-xs text-slate-400">packets</div>
+            </div>
+
+            {/* Circular Progress Ring with 80% */}
+            <div className="relative w-12 h-12 flex items-center justify-center">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#e2e8f0"
+                  strokeWidth="3.6"
+                />
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#0284c7"
+                  strokeWidth="3.6"
+                  strokeDasharray="80, 100"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <span className="absolute font-bold text-[10px] text-blue-950 font-mono">80%</span>
+            </div>
+          </div>
+
+          <div className="text-[11px] text-slate-400">Target: 8,000 packets</div>
+        </div>
+
+        {/* Card 3: Blood Pressure / Latency */}
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 flex flex-col justify-between h-36">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-medium">Blood Pressure / Latency</span>
+            <div className="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center">
+              <Thermometer className="w-4 h-4" />
+            </div>
+          </div>
+
+          <div className="my-1">
+            <span className="text-2xl font-bold text-blue-950 font-mono">118/79</span>
+            <span className="text-xs text-slate-500 ml-1">mmHg &bull; <strong className="text-emerald-600 font-mono">4.2ms</strong></span>
+          </div>
+
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-cyan-700 font-bold">Stable</span>
+            <span className="text-slate-500 font-mono text-[10px]">Sub-10ms QoS</span>
+          </div>
+        </div>
+
+        {/* Card 4: Sleep / Buffer Delay Prevented */}
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 flex flex-col justify-between h-36">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-medium">Buffer Delay Prevented</span>
+            <div className="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center">
+              <Moon className="w-4 h-4" />
+            </div>
+          </div>
+
+          <div className="my-1">
+            <span className="text-2xl font-bold text-blue-950 font-mono">7h 12m</span>
+            <span className="text-xs text-slate-500 ml-1">&bull; 237ms Saved</span>
+          </div>
+
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-cyan-700 font-bold">Optimal</span>
+            <span className="text-slate-500 font-mono text-[10px]">0% Drops</span>
+          </div>
+        </div>
+
+      </div>
+
+      {/* 3. Activity Overview (Waveform Card) */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-3">
+        <div className="flex items-center justify-between border-b border-blue-100 pb-3">
+          <div>
+            <h3 className="text-sm font-bold text-blue-950 tracking-tight">Activity Overview</h3>
+            <p className="text-xs text-slate-500">MRI bandwidth load & QoS throughput</p>
+          </div>
+          <span className="text-xs font-mono font-bold text-cyan-700 bg-cyan-50 px-3 py-1 rounded-full border border-cyan-200">
+            Real-Time QoS Telemetry
+          </span>
+        </div>
+
+        <div className="relative pt-2 pb-2">
+          {/* Y-Axis labels */}
+          <div className="absolute left-0 top-2 bottom-8 flex flex-col justify-between text-[10px] text-slate-400 font-mono">
+            <span>1500</span>
+            <span>1000</span>
+            <span>500</span>
+            <span>0</span>
+          </div>
+
+          {/* SVG Waveform Curve */}
+          <div className="pl-12 pr-2">
+            <svg className="w-full h-28 overflow-visible" viewBox="0 0 500 80" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="cyanAreaSoft" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 0,72 C 60,78 120,74 180,56 C 240,38 300,24 360,12 C 420,4 460,32 500,18 L 500,80 L 0,80 Z"
+                fill="url(#cyanAreaSoft)"
+              />
+              <path
+                d="M 0,72 C 60,78 120,74 180,56 C 240,38 300,24 360,12 C 420,4 460,32 500,18"
+                fill="none"
+                stroke="#0284c7"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+
+          {/* X-Axis Days */}
+          <div className="flex justify-between pl-12 pr-2 pt-2 text-xs text-slate-400 font-medium">
+            <span>Sun</span>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Interactive Network Congestion Slider & Priority Toggle */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex-1 w-full space-y-2">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-blue-950 font-bold flex items-center space-x-2">
+                <Sliders className="w-4 h-4 text-cyan-600" />
+                <span>Simulate Hospital Network Congestion:</span>
+              </span>
+              <span className="font-mono font-bold text-cyan-800 bg-cyan-100 px-3 py-1 rounded-full border border-cyan-200 text-xs">
+                {backgroundLoad}% Busy ({backgroundLoad} Mbps)
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="95"
+              step="5"
+              value={backgroundLoad}
+              onChange={(e) => setBackgroundLoad(parseFloat(e.target.value))}
+              className="w-full h-2.5 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+            />
+            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>Quiet Bay (0%)</span>
+              <span>Moderate Traffic (50%)</span>
+              <span>Heavy Hospital Saturation (95%)</span>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4 border-t md:border-t-0 md:border-l border-blue-100 pt-3 md:pt-0 md:pl-6">
+            <div>
+              <div className="text-xs font-bold text-blue-950">Priority Routing</div>
+              <div className="text-[10px] text-slate-500 font-mono">
+                {enablePriority ? 'Fast Lane Active' : 'Normal FIFO'}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setEnablePriority(!enablePriority)}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold font-mono transition-all shadow-sm ${
+                enablePriority
+                  ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-blue-500/25'
+                  : 'bg-blue-50 text-slate-600 border border-blue-200'
+              }`}
+            >
+              {enablePriority ? 'FAST LANE ON' : 'FIFO OFF'}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Live Result Toast if a study was just transmitted */}
       {lastResult && (
-        <div className="bg-slate-900 border border-emerald-500/50 rounded-2xl p-4 space-y-2 animate-fadeIn">
+        <div className="bg-white/95 backdrop-blur-xl border border-emerald-300 rounded-[2.5rem] p-6 space-y-3 shadow-md shadow-emerald-500/10 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-emerald-400 font-semibold text-xs">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Study Transmitted Successfully!</span>
+            <div className="flex items-center space-x-2 text-emerald-700 font-bold text-xs">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Study Transmitted Successfully to PACS!</span>
             </div>
-            <span className="text-[11px] font-mono text-slate-400">
-              Mode: <strong className="text-white">{lastResult.scenario === 'QOS_PRIORITY' ? 'Fast Lane' : 'Standard'}</strong>
+            <span className="text-[11px] font-mono text-slate-600">
+              Forwarding Mode: <strong className="text-blue-950">{lastResult.scenario === 'QOS_PRIORITY' ? 'Fast Lane (SPQ)' : 'Standard FIFO'}</strong>
             </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono pt-1">
-            <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
-              <div className="text-[10px] text-slate-500">Duration</div>
-              <div className="text-sm font-bold text-emerald-400">{lastResult.metrics.transfer_time_sec}s</div>
+            <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-100">
+              <div className="text-[10px] text-slate-500">Transfer Time</div>
+              <div className="text-sm font-bold text-emerald-600">{lastResult.metrics.transfer_time_sec}s</div>
             </div>
-            <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
+            <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-100">
               <div className="text-[10px] text-slate-500">Latency</div>
-              <div className="text-sm font-bold text-sky-400">{lastResult.metrics.latency_ms}ms</div>
+              <div className="text-sm font-bold text-cyan-600">{lastResult.metrics.latency_ms}ms</div>
             </div>
-            <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
+            <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-100">
               <div className="text-[10px] text-slate-500">Throughput</div>
-              <div className="text-sm font-bold text-amber-400">{lastResult.metrics.throughput_mbps} Mbps</div>
+              <div className="text-sm font-bold text-blue-700">{lastResult.metrics.throughput_mbps} Mbps</div>
             </div>
-            <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
-              <div className="text-[10px] text-slate-500">Packet Loss</div>
-              <div className={`text-sm font-bold ${lastResult.metrics.packet_loss_pct > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+            <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-100">
+              <div className="text-[10px] text-slate-500">Packet Drop Rate</div>
+              <div className={`text-sm font-bold ${lastResult.metrics.packet_loss_pct > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
                 {lastResult.metrics.packet_loss_pct}%
               </div>
             </div>
@@ -253,31 +374,31 @@ export default function Dashboard({ setActiveTab, setSelectedPacket }) {
         </div>
       )}
 
-      {/* The 3 Priority Queues */}
+      {/* 5. The 3 Priority Queues */}
       <div className="space-y-4">
         
         {/* Lane 1: Emergency Express Lane */}
-        <div className="bg-slate-900/90 border border-rose-600/30 rounded-2xl p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-rose-950/60 pb-3">
+        <div className="bg-white/90 backdrop-blur-xl border border-rose-200 rounded-[2.5rem] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-rose-900/5 space-y-4">
+          <div className="flex items-center justify-between border-b border-rose-100 pb-3">
             <div className="flex items-center space-x-2.5">
-              <span className="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></span>
-              <h2 className="text-sm font-bold text-white">Emergency Fast Lane</h2>
-              <span className="bg-rose-500/20 text-rose-300 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold border border-rose-500/30">
-                DSCP 46
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+              <h2 className="text-sm font-bold text-blue-950">Emergency Fast Lane</h2>
+              <span className="bg-rose-100 text-rose-700 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold border border-rose-200">
+                DSCP 46 (EF)
               </span>
             </div>
             <span className="text-xs text-slate-400 font-mono">
-              {emergencyQueue.length} scans waiting
+              {emergencyScans.length} scans waiting
             </span>
           </div>
 
-          {emergencyQueue.length === 0 ? (
-            <div className="py-6 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+          {emergencyScans.length === 0 ? (
+            <div className="py-6 text-center text-xs text-slate-400 border border-dashed border-rose-200 rounded-2xl">
               No emergency scans currently waiting.
             </div>
           ) : (
-            <div className="space-y-2.5">
-              {emergencyQueue.map(req => (
+            <div className="space-y-3">
+              {emergencyScans.map(req => (
                 <QueueItem
                   key={req.id}
                   req={req}
@@ -291,27 +412,27 @@ export default function Dashboard({ setActiveTab, setSelectedPacket }) {
         </div>
 
         {/* Lane 2: Urgent Lane */}
-        <div className="bg-slate-900/90 border border-amber-600/30 rounded-2xl p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-amber-950/60 pb-3">
+        <div className="bg-white/90 backdrop-blur-xl border border-amber-200 rounded-[2.5rem] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-amber-900/5 space-y-4">
+          <div className="flex items-center justify-between border-b border-amber-100 pb-3">
             <div className="flex items-center space-x-2.5">
-              <span className="w-3 h-3 rounded-full bg-amber-400"></span>
-              <h2 className="text-sm font-bold text-white">Urgent / ICU Lane</h2>
-              <span className="bg-amber-500/20 text-amber-300 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold border border-amber-500/30">
-                DSCP 34
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <h2 className="text-sm font-bold text-blue-950">Urgent / ICU Lane</h2>
+              <span className="bg-amber-100 text-amber-800 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold border border-amber-200">
+                DSCP 34 (AF41)
               </span>
             </div>
             <span className="text-xs text-slate-400 font-mono">
-              {urgentQueue.length} scans waiting
+              {urgentScans.length} scans waiting
             </span>
           </div>
 
-          {urgentQueue.length === 0 ? (
-            <div className="py-6 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+          {urgentScans.length === 0 ? (
+            <div className="py-6 text-center text-xs text-slate-400 border border-dashed border-amber-200 rounded-2xl">
               No urgent scans currently waiting.
             </div>
           ) : (
-            <div className="space-y-2.5">
-              {urgentQueue.map(req => (
+            <div className="space-y-3">
+              {urgentScans.map(req => (
                 <QueueItem
                   key={req.id}
                   req={req}
@@ -325,27 +446,27 @@ export default function Dashboard({ setActiveTab, setSelectedPacket }) {
         </div>
 
         {/* Lane 3: Standard Lane */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div className="bg-white/90 backdrop-blur-xl border border-blue-200 rounded-[2.5rem] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/5 space-y-4">
+          <div className="flex items-center justify-between border-b border-blue-100 pb-3">
             <div className="flex items-center space-x-2.5">
-              <span className="w-3 h-3 rounded-full bg-sky-400"></span>
-              <h2 className="text-sm font-bold text-white">Standard Lane</h2>
-              <span className="bg-sky-500/20 text-sky-300 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold border border-sky-500/30">
-                DSCP 0
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+              <h2 className="text-sm font-bold text-blue-950">Standard Lane</h2>
+              <span className="bg-cyan-100 text-cyan-800 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold border border-cyan-200">
+                DSCP 0 (CS0)
               </span>
             </div>
             <span className="text-xs text-slate-400 font-mono">
-              {normalQueue.length} scans waiting
+              {normalScans.length} scans waiting
             </span>
           </div>
 
-          {normalQueue.length === 0 ? (
-            <div className="py-6 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+          {normalScans.length === 0 ? (
+            <div className="py-6 text-center text-xs text-slate-400 border border-dashed border-blue-200 rounded-2xl">
               No standard scans currently waiting.
             </div>
           ) : (
-            <div className="space-y-2.5">
-              {normalQueue.map(req => (
+            <div className="space-y-3">
+              {normalScans.map(req => (
                 <QueueItem
                   key={req.id}
                   req={req}
@@ -370,42 +491,42 @@ function QueueItem({ req, transmitting, onTransmit, onInspect }) {
   const isCompleted = req.status === 'COMPLETED';
 
   return (
-    <div className="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
+    <div className="bg-blue-50/50 hover:bg-blue-50 border border-blue-100 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all">
       <div className="space-y-1 min-w-0">
         <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold text-white truncate">{req.mri_type}</span>
+          <span className="text-xs font-bold text-blue-950 truncate">{req.mri_type}</span>
           <span className="text-[10px] text-slate-400 font-mono">({req.request_id})</span>
         </div>
-        <div className="text-[11px] text-slate-400 truncate max-w-xl">
+        <div className="text-[11px] text-slate-500 truncate max-w-xl">
           {req.clinical_reason}
         </div>
-        <div className="flex items-center space-x-3 text-[10px] text-slate-500 font-mono pt-0.5">
-          <span>Device: <code className="text-slate-300">{req.source_ip}</code></span>
-          <span>Size: <code className="text-slate-300">{req.image_size_mb} MB</code></span>
-          <span>Status: <strong className={isCompleted ? 'text-emerald-400' : 'text-amber-400'}>{req.status}</strong></span>
+        <div className="flex items-center space-x-3 text-[10px] text-slate-400 font-mono pt-0.5">
+          <span>Device: <code className="text-cyan-700 font-semibold">{req.source_ip}</code></span>
+          <span>Size: <code className="text-blue-950 font-medium">{req.image_size_mb} MB</code></span>
+          <span>Status: <strong className={isCompleted ? 'text-emerald-600' : 'text-amber-600'}>{req.status}</strong></span>
         </div>
       </div>
 
       <div className="flex items-center space-x-2 flex-shrink-0 self-start sm:self-center">
         <button
           onClick={onInspect}
-          className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-sky-400 hover:text-sky-300 rounded-lg text-xs font-medium border border-slate-700 flex items-center space-x-1 transition"
+          className="px-4 py-2 bg-white hover:bg-blue-100 text-blue-700 hover:text-blue-950 rounded-full text-xs font-semibold border border-blue-200 flex items-center space-x-1.5 transition shadow-sm"
         >
-          <Layers className="w-3.5 h-3.5" />
-          <span>Inspect</span>
+          <Layers className="w-3.5 h-3.5 text-cyan-600" />
+          <span>Inspect Header</span>
         </button>
 
         <button
           onClick={onTransmit}
           disabled={transmitting}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow flex items-center space-x-1.5 transition ${
-            isEmergency ? 'bg-rose-600 hover:bg-rose-500' :
-            isUrgent ? 'bg-amber-600 hover:bg-amber-500' :
-            'bg-sky-600 hover:bg-sky-500'
+          className={`px-5 py-2 rounded-full text-xs font-bold text-white shadow-md flex items-center space-x-1.5 transition ${
+            isEmergency ? 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 shadow-rose-500/25' :
+            isUrgent ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-amber-500/25' :
+            'bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 shadow-blue-500/25'
           }`}
         >
           {transmitting ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
-          <span>{transmitting ? 'Sending...' : 'Send Scan'}</span>
+          <span>{transmitting ? 'Transmitting...' : 'Send Scan'}</span>
         </button>
       </div>
     </div>

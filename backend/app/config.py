@@ -1,4 +1,8 @@
 import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_DB_PATH = BASE_DIR / "hospital_data.db"
 
 class Settings:
     PROJECT_NAME: str = "Smart Hospital Emergency MRI Prioritization System"
@@ -7,7 +11,7 @@ class Settings:
     SECRET_KEY: str = os.getenv("SECRET_KEY", "hospital-super-secret-key-emergency-qos-2026-secure")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours for lab demo ease
-    DATABASE_URL: str = "sqlite:///./hospital_mri_qos.db"
+    DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH.as_posix()}")
     
     # Network Configuration Defaults
     VLAN_EMERGENCY_ID: int = 10

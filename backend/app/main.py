@@ -4,9 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .database import engine, Base
 from .seed_data import init_seed_db
-from .routers import auth, patients, mri, network, analytics, audit, simulation
+from .routers import auth, patients, mri, network, analytics, audit, simulation, admin
 
-# Create database tables
+# Create database schema on permanent SQLite engine
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -20,6 +20,7 @@ This system implements an authorized, clinical workflow-driven traffic prioritiz
 - **Layer 3 Marking:** DSCP EF (46) for Emergency, DSCP AF41 (34) for Urgent, DSCP CS0 (0) for Routine/Best Effort.
 - **Router Queuing:** Strict Priority Low-Latency Queueing (LLQ) + Class-Based Weighted Fair Queueing (CBWFQ).
 - **Security Boundary:** RFC 2474 Edge Traffic Conditioning preventing DSCP spoofing and untrusted priority assertions.
+- **RBAC & Security:** Admin doctor provisioning with bcrypt, forced password change, and strict UTC audit logging.
     """,
     docs_url="/docs",
     redoc_url="/redoc"
@@ -34,14 +35,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register API Routers
+# Register API Routers (Mount under both API_V1_STR and root for flexible integration)
+app.include_router(admin.router, prefix=settings.API_V1_STR)
+app.include_router(admin.router)
+
 app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(auth.router)
+
 app.include_router(patients.router, prefix=settings.API_V1_STR)
+app.include_router(patients.router)
+
 app.include_router(mri.router, prefix=settings.API_V1_STR)
+app.include_router(mri.router)
+
 app.include_router(network.router, prefix=settings.API_V1_STR)
+app.include_router(network.router)
 app.include_router(analytics.router, prefix=settings.API_V1_STR)
+app.include_router(analytics.router)
 app.include_router(audit.router, prefix=settings.API_V1_STR)
+app.include_router(audit.router)
 app.include_router(simulation.router, prefix=settings.API_V1_STR)
+app.include_router(simulation.router)
 
 @app.on_event("startup")
 def on_startup():
@@ -58,6 +72,7 @@ def root():
         "version": settings.VERSION,
         "status": "ONLINE",
         "docs_url": "/docs",
+        "database": settings.DATABASE_URL,
         "primary_osi_layer": "Layer 3 (Network Layer - IPv4 DiffServ DSCP)",
         "qos_standard": "RFC 2474, RFC 2475, RFC 2597, RFC 3246",
         "active_gateway": "192.168.10.1 (Cisco 2911 / Linux tc Gateway)"

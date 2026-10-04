@@ -1,32 +1,74 @@
-from datetime import datetime
-from typing import List, Optional
-from pydantic import BaseModel, Field
+from datetime import datetime, timezone
+from typing import List, Optional, Annotated
+from pydantic import BaseModel, Field, PlainSerializer
 
-# ----------------- User Schemas -----------------
+# Strict UTC ISO 8601 Serializer (e.g., 2026-10-02T21:30:00Z)
+def format_utc_iso(dt: Optional[datetime]) -> Optional[str]:
+    if dt is None:
+        return None
+    # Ensure timezone awareness (SQLite stores naive UTC datetimes)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt = dt.astimezone(timezone.utc)
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+StrictUtcDateTime = Annotated[
+    datetime,
+    PlainSerializer(format_utc_iso, return_type=str)
+]
+
+OptionalStrictUtcDateTime = Annotated[
+    Optional[datetime],
+    PlainSerializer(format_utc_iso, return_type=Optional[str])
+]
+
+# ----------------- User & Authentication Schemas -----------------
 class UserBase(BaseModel):
-    username: str
-    full_name: str
-    role: str
-    department: str
+    username: str = Field(..., min_length=3, max_length=50, example="dr_watson")
+    full_name: str = Field(..., example="Dr. John Watson, MD")
+    role: str = Field(default="DOCTOR", example="DOCTOR")
+    department: str = Field(default="Emergency Medicine & Trauma", example="Emergency Medicine & Trauma")
 
 class UserCreate(UserBase):
-    password: str
+    password: str = Field(..., min_length=6, example="TempDocPass2026!")
+
+class AdminCreateDoctorRequest(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50, example="dr_watson")
+    password: str = Field(..., min_length=6, description="Temporary password hashed using bcrypt", example="TempDoctor2026!")
+    full_name: str = Field(default="Dr. New Physician, MD", example="Dr. John Watson, MD")
+    department: str = Field(default="Emergency Medicine & Trauma", example="Emergency Medicine & Trauma")
 
 class UserResponse(UserBase):
     id: int
     is_active: bool
-    created_at: datetime
+    requires_password_change: bool
+    created_at: StrictUtcDateTime
 
     class Config:
         from_attributes = True
 
 class UserLogin(BaseModel):
-    username: str
-    password: str
+    username: str = Field(..., example="dr_sharma")
+    password: str = Field(..., example="password123")
 
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str
+    token_type: str = "bearer"
+    requires_password_change: bool = False
+    user: UserResponse
+
+class ChangePasswordRequest(BaseModel):
+    username: Optional[str] = Field(None, example="dr_watson")
+    old_password: str = Field(..., min_length=1, example="TempDoctor2026!")
+    new_password: str = Field(..., min_length=6, example="SecurePermanentDocPass2026!")
+
+class ChangePasswordResponse(BaseModel):
+    status: str = "success"
+    message: str
+    access_token: str
+    token_type: str = "bearer"
+    requires_password_change: bool = False
     user: UserResponse
 
 # ----------------- Patient Schemas -----------------
@@ -35,7 +77,7 @@ class PatientBase(BaseModel):
     age: int = Field(..., ge=0, le=130, example=45)
     gender: str = Field(..., example="Female")
     department: str = Field(..., example="Emergency Neurology")
-    doctor_name: str = Field(..., example="Dr. Sarah Sharma")
+    doctor_name: Optional[str] = Field(None, example="Dr. Sarah Sharma, MD")
     triage_level: str = Field(default="Standard", example="Emergency")
     vitals_summary: Optional[str] = Field(None, example="BP: 145/95, HR: 110, SpO2: 96%")
 
@@ -45,7 +87,7 @@ class PatientCreate(PatientBase):
 class PatientResponse(PatientBase):
     id: int
     patient_id: str
-    admission_time: datetime
+    admission_time: StrictUtcDateTime
 
     class Config:
         from_attributes = True
@@ -86,8 +128,8 @@ class MRIRequestResponse(BaseModel):
     throughput_mbps: float
     
     created_by_user_id: int
-    created_at: datetime
-    processed_at: Optional[datetime]
+    created_at: StrictUtcDateTime
+    processed_at: OptionalStrictUtcDateTime = None
     patient: Optional[PatientResponse] = None
 
     class Config:
@@ -107,15 +149,15 @@ class NetworkDeviceResponse(BaseModel):
     vlan_name: str
     device_type: str
     is_trusted: bool
-    description: Optional[str]
+    description: Optional[str] = None
 
     class Config:
         from_attributes = True
 
 class QoSEventResponse(BaseModel):
     id: int
-    timestamp: datetime
-    request_id: Optional[str]
+    timestamp: StrictUtcDateTime
+    request_id: Optional[str] = None
     event_type: str
     source_ip: str
     dest_ip: str
@@ -123,14 +165,14 @@ class QoSEventResponse(BaseModel):
     queue_assigned: str
     action_taken: str
     is_spoofed_attempt: bool
-    details: Optional[str]
+    details: Optional[str] = None
 
     class Config:
         from_attributes = True
 
 class NetworkMetricResponse(BaseModel):
     id: int
-    timestamp: datetime
+    timestamp: StrictUtcDateTime
     scenario: str
     background_traffic_mbps: float
     latency_ms: float
@@ -147,12 +189,12 @@ class NetworkMetricResponse(BaseModel):
 # ----------------- Audit Log Schemas -----------------
 class AuditLogResponse(BaseModel):
     id: int
-    timestamp: datetime
-    user_id: Optional[int]
+    timestamp: StrictUtcDateTime
+    user_id: Optional[int] = None
     username: str
     action: str
     ip_address: str
-    details: Optional[str]
+    details: Optional[str] = None
     status: str
 
     class Config:
@@ -171,3 +213,29 @@ class DashboardStats(BaseModel):
     current_throughput_mbps: float
     qos_engine_status: str
     router_gateway: str
+
+# ----------------- Clinical Access Request Schemas -----------------
+class AccessRequestCreate(BaseModel):
+    full_name: str
+    department: str
+    email: str
+    staff_id: str
+
+class AccessRequestResponse(BaseModel):
+    id: int
+    full_name: str
+    department: str
+    email: str
+    staff_id: str
+    status: str
+    created_at: StrictUtcDateTime
+    reviewed_at: OptionalStrictUtcDateTime = None
+    reviewed_by: Optional[str] = None
+    notes: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class AccessRequestAction(BaseModel):
+    action: str  # "APPROVE" or "REJECT"
+    notes: Optional[str] = None

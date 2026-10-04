@@ -26,24 +26,54 @@ export const DEMO_USERS = [
     badge: 'Network Administrator (L3 QoS & Router Control)'
   },
   {
-    username: 'admin_dave',
-    name: 'Hospital Systems Administrator',
+    username: 'admin1',
+    name: 'Hospital Administrator',
     role: 'ADMIN',
     department: 'Hospital Governance & IT Security',
     badge: 'Super Administrator (Full System Audit)'
+  },
+  {
+    username: 'admin_dave',
+    name: 'Hospital Systems Administrator',
+    role: 'ADMIN',
+    department: 'Hospital Operations & IT Governance',
+    badge: 'Systems Administrator (Core Security)'
   }
 ];
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(DEMO_USERS[0]);
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [currentUser, setCurrentUserState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('currentUser');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [token, setToken] = useState(() => localStorage.getItem('token') || '');
   const [loading, setLoading] = useState(false);
+
+  const setCurrentUser = (user) => {
+    setCurrentUserState(user);
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('currentUser');
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    setToken('');
+    setCurrentUserState(null);
+  };
 
   const switchUser = async (userObj) => {
     setLoading(true);
     try {
-      // Perform backend login to obtain legitimate JWT
-      const res = await api.login(userObj.username, 'password123');
+      const res = await api.login(userObj.username, 'kalp1524');
       localStorage.setItem('token', res.access_token);
       setToken(res.access_token);
       setCurrentUser(userObj);
@@ -55,13 +85,16 @@ export function AuthProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    // Attempt auto-login with default doctor on start
-    switchUser(DEMO_USERS[0]);
-  }, []);
-
   return (
-    <AuthContext.Provider value={{ currentUser, setCurrentUser, switchUser, loading, demoUsers: DEMO_USERS }}>
+    <AuthContext.Provider value={{ 
+      currentUser, 
+      setCurrentUser, 
+      logout,
+      switchUser, 
+      token,
+      loading, 
+      demoUsers: DEMO_USERS 
+    }}>
       {children}
     </AuthContext.Provider>
   );
