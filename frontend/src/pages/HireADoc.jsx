@@ -183,10 +183,10 @@ export default function HireADoc({ onDoctorCreated }) {
       <div className="flex space-x-3 border-b border-blue-100 pb-3">
         <button
           onClick={() => setActiveSubTab('provision')}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold transition flex items-center space-x-2 ${
+          className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center space-x-2 ${
             activeSubTab === 'provision'
-              ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-md shadow-blue-500/20'
-              : 'bg-white/80 text-blue-900 hover:bg-white border border-blue-100'
+              ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-md shadow-blue-500/20 ring-2 ring-cyan-300'
+              : 'bg-white/80 text-blue-900 hover:bg-white border border-blue-100 hover:ring-2 hover:ring-cyan-300/60 shadow-sm'
           }`}
         >
           <UserPlus className="w-4 h-4" />
@@ -195,16 +195,16 @@ export default function HireADoc({ onDoctorCreated }) {
 
         <button
           onClick={() => setActiveSubTab('requests')}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold transition flex items-center space-x-2 relative ${
+          className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center space-x-2 relative ${
             activeSubTab === 'requests'
-              ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-md shadow-blue-500/20'
-              : 'bg-white/80 text-blue-900 hover:bg-white border border-blue-100'
+              ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-md shadow-blue-500/20 ring-2 ring-cyan-300'
+              : 'bg-white/80 text-blue-900 hover:bg-white border border-blue-100 hover:ring-2 hover:ring-cyan-300/60 shadow-sm'
           }`}
         >
           <Inbox className="w-4 h-4" />
           <span>Access Requests From Portal</span>
           {pendingRequests.length > 0 && (
-            <span className="bg-rose-500 text-white text-[10px] font-mono px-2 py-0.2 rounded-full animate-pulse">
+            <span className="bg-rose-500 text-white text-[10px] font-mono px-2 py-0.2 rounded-full animate-pulse shadow-sm">
               {pendingRequests.length}
             </span>
           )}
@@ -216,8 +216,8 @@ export default function HireADoc({ onDoctorCreated }) {
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 sm:p-9 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-6">
           <div className="flex items-center justify-between border-b border-blue-100 pb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-cyan-100 text-cyan-600 flex items-center justify-center">
-                <Inbox className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-2xl bg-cyan-100 text-cyan-600 flex items-center justify-center shadow-sm">
+                <Inbox className="w-5 h-5 animate-pulse" />
               </div>
               <div>
                 <h2 className="text-base font-bold text-blue-950">Portal Clinical Access Inquiries</h2>
@@ -252,18 +252,18 @@ export default function HireADoc({ onDoctorCreated }) {
                 return (
                   <div
                     key={req.id}
-                    className={`p-5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                    className={`p-5 rounded-2xl border transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.01] flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                       isPending 
-                        ? 'bg-blue-50/70 border-blue-200' 
+                        ? 'bg-blue-50/70 hover:bg-white border-blue-200 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/50 hover:shadow-xl hover:shadow-cyan-500/15' 
                         : isApproved 
-                        ? 'bg-emerald-50/50 border-emerald-200 opacity-80' 
+                        ? 'bg-emerald-50/50 hover:bg-white border-emerald-200 hover:ring-2 hover:ring-emerald-400/50 hover:shadow-md opacity-80' 
                         : 'bg-slate-50 border-slate-200 opacity-60'
                     }`}
                   >
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-sm font-bold text-blue-950">{req.full_name}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white border border-blue-100 text-blue-700 font-semibold">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white border border-blue-100 text-blue-700 font-semibold shadow-sm">
                           Staff ID: {req.staff_id}
                         </span>
                         <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
@@ -294,7 +294,7 @@ export default function HireADoc({ onDoctorCreated }) {
                         <button
                           onClick={() => handleRejectRequest(req.id)}
                           disabled={reviewingId === req.id}
-                          className="px-4 py-2 rounded-full border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-semibold transition flex items-center space-x-1"
+                          className="px-4 py-2 rounded-full border border-rose-200 hover:border-rose-300 text-rose-700 hover:bg-rose-50 text-xs font-semibold transition-all duration-200 transform hover:-translate-y-0.5 hover:scale-105 flex items-center space-x-1 hover:shadow-sm"
                         >
                           <X className="w-3.5 h-3.5" />
                           <span>Reject</span>
@@ -302,7 +302,7 @@ export default function HireADoc({ onDoctorCreated }) {
                         <button
                           onClick={() => handleAcceptRequest(req)}
                           disabled={reviewingId === req.id}
-                          className="px-5 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-xs font-bold transition shadow-sm flex items-center space-x-1"
+                          className="px-5 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-xs font-bold transition-all duration-200 transform hover:-translate-y-0.5 hover:scale-105 shadow-md shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/40 hover:ring-2 hover:ring-emerald-300 flex items-center space-x-1"
                         >
                           <Check className="w-3.5 h-3.5" />
                           <span>Accept & Provision</span>

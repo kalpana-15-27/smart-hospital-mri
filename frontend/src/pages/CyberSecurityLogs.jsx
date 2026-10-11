@@ -88,54 +88,54 @@ export default function CyberSecurityLogs() {
 
         <button
           onClick={loadLogs}
-          className="px-5 py-2.5 bg-white border border-blue-200/80 text-blue-700 hover:text-blue-950 rounded-full text-xs font-bold flex items-center space-x-2 self-start sm:self-auto transition-all shadow-sm hover:shadow"
+          className="group px-5 py-2.5 bg-white border border-blue-200/80 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/40 text-blue-700 hover:text-cyan-900 rounded-full text-xs font-bold flex items-center space-x-2 self-start sm:self-auto transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-lg hover:shadow-cyan-500/20"
         >
-          <RefreshCw className="w-3.5 h-3.5 text-cyan-500" />
+          <RefreshCw className="w-3.5 h-3.5 text-cyan-500 group-hover:rotate-180 transition-transform duration-500" />
           <span>Refresh Logs</span>
         </button>
       </div>
 
-      {/* Hero: Anti-Spoofing Defense Simulator (Soft Glass Card) */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-4">
+      {/* Hero: Anti-Spoofing Defense Simulator (Soft Glass Card with Hover Float & Glow) */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 hover:border-rose-300 hover:ring-2 hover:ring-rose-400/40 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 hover:shadow-2xl hover:shadow-rose-500/15 transition-all duration-300 transform hover:-translate-y-1 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-blue-100 pb-4">
           <div className="space-y-1">
             <div className="flex items-center space-x-2 text-rose-600 font-bold text-xs font-mono">
-              <ShieldAlert className="w-4 h-4 text-rose-500" />
+              <ShieldAlert className="w-4 h-4 text-rose-500 animate-pulse" />
               <span>Edge Trust Boundary Defense: Anti-DSCP Spoofing</span>
             </div>
             <p className="text-xs text-slate-500 max-w-2xl leading-relaxed">
-              If an unauthorized device in the guest network attempts to inject fake <code className="text-rose-600 font-mono font-bold">DSCP 46 (Emergency)</code> packets to hog bandwidth, the edge router intercepts it, issues a security alert, and resets the tag to standard.
+              If an unauthorized device in the guest network attempts to inject fake <code className="text-rose-600 font-mono font-bold bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">DSCP 46 (Emergency)</code> packets to hog bandwidth, the edge router intercepts it, issues a security alert, and resets the tag to standard.
             </p>
           </div>
 
           <button
             onClick={handleSimulateAttack}
             disabled={simulatingAttack}
-            className="px-6 py-3 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-full font-bold text-xs shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 flex items-center space-x-2 transition-all flex-shrink-0 disabled:opacity-50"
+            className="group px-6 py-3 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-full font-bold text-xs shadow-lg shadow-rose-500/25 hover:shadow-2xl hover:shadow-rose-500/50 hover:ring-2 hover:ring-rose-400/50 flex items-center space-x-2 transition-all duration-300 transform hover:scale-105 active:scale-95 flex-shrink-0 disabled:opacity-50"
           >
-            {simulatingAttack ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+            {simulatingAttack ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 group-hover:scale-110 transition-transform" />}
             <span>{simulatingAttack ? 'Testing Defense...' : 'Test Rogue Priority Attack'}</span>
           </button>
         </div>
 
         {/* Attack Mitigation Feedback Card */}
         {attackResult && (
-          <div className="bg-emerald-50/90 border border-emerald-200 rounded-2xl p-5 space-y-2.5 animate-in fade-in duration-200 text-xs shadow-sm">
+          <div className="bg-emerald-50/90 border-2 border-emerald-300 ring-4 ring-emerald-400/30 rounded-2xl p-5 space-y-2.5 animate-in fade-in duration-300 text-xs shadow-md">
             <div className="flex items-center space-x-2 text-emerald-800 font-bold">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 animate-bounce" />
               <span>Defense Succeeded: Attack Detected & Mitigated!</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-[11px] pt-1">
-              <div className="bg-white/80 p-3 rounded-xl border border-emerald-100">
+              <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 shadow-sm hover:-translate-y-0.5 transition-transform">
                 <span className="text-slate-400 block text-[10px]">Rogue Device IP:</span>
                 <span className="text-blue-950 font-bold">{attackResult.source_ip}</span>
               </div>
-              <div className="bg-white/80 p-3 rounded-xl border border-emerald-100">
+              <div className="bg-white/90 p-3 rounded-xl border border-rose-200 shadow-sm hover:-translate-y-0.5 transition-transform">
                 <span className="text-slate-400 block text-[10px]">Attempted Unauthorized Tag:</span>
                 <span className="text-rose-600 font-bold">DSCP {attackResult.attempted_dscp}</span>
               </div>
-              <div className="bg-white/80 p-3 rounded-xl border border-emerald-100">
+              <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 shadow-sm hover:-translate-y-0.5 transition-transform">
                 <span className="text-slate-400 block text-[10px]">Enforced Edge Action:</span>
                 <span className="text-emerald-700 font-bold">Force-Reset to DSCP 0</span>
               </div>
@@ -144,53 +144,65 @@ export default function CyberSecurityLogs() {
         )}
       </div>
 
-      {/* Examiner Viva Voce Cheat Sheet (Soft Glass Card) */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-4">
+      {/* Examiner Viva Voce Cheat Sheet (Soft Glass Card with Hover Highlights) */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/40 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 hover:shadow-2xl hover:shadow-cyan-500/15 transition-all duration-300 transform hover:-translate-y-1 space-y-4">
         <div className="flex items-center justify-between border-b border-blue-100 pb-3">
           <h2 className="text-xs font-bold text-blue-950 uppercase tracking-wider font-mono flex items-center space-x-2">
-            <HelpCircle className="w-4 h-4 text-cyan-600" />
+            <HelpCircle className="w-4 h-4 text-cyan-600 animate-pulse" />
             <span>Examiner Q&A Cheat Sheet (Viva Voce Defense)</span>
           </h2>
-          <span className="text-[10px] text-cyan-700 font-mono font-bold bg-cyan-50 px-2.5 py-0.5 rounded-full border border-cyan-200">
+          <span className="text-[10px] text-cyan-700 font-mono font-bold bg-cyan-50 px-3 py-1 rounded-full border border-cyan-200 shadow-sm">
             Academic Key Concepts
           </span>
         </div>
 
-        <div className="space-y-2.5 text-xs">
-          {FAQS.map((faq, idx) => (
-            <div 
-              key={idx}
-              className="bg-blue-50/50 rounded-2xl border border-blue-100 overflow-hidden transition-all"
-            >
-              <button
-                onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                className="w-full p-4 text-left font-semibold text-blue-950 flex items-center justify-between hover:text-cyan-700 transition"
+        <div className="space-y-3 text-xs">
+          {FAQS.map((faq, idx) => {
+            const isOpen = expandedFaq === idx;
+            return (
+              <div 
+                key={idx}
+                className={`rounded-2xl border transition-all duration-300 transform hover:-translate-y-1 overflow-hidden shadow-sm hover:shadow-md ${
+                  isOpen 
+                    ? 'bg-blue-50/90 border-cyan-300 ring-2 ring-cyan-400/30' 
+                    : 'bg-blue-50/50 border-blue-100 hover:border-cyan-200 hover:bg-blue-50/80 hover:ring-1 hover:ring-cyan-400/20'
+                }`}
               >
-                <span>{faq.q}</span>
-                {expandedFaq === idx ? <ChevronUp className="w-4 h-4 text-cyan-600" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
-              </button>
+                <button
+                  onClick={() => setExpandedFaq(isOpen ? null : idx)}
+                  className="w-full p-4 text-left font-semibold text-blue-950 flex items-center justify-between hover:text-cyan-800 transition"
+                >
+                  <span className="flex items-center space-x-2.5">
+                    <span className={`w-2 h-2 rounded-full transition-all ${isOpen ? 'bg-cyan-500 scale-125' : 'bg-blue-300'}`}></span>
+                    <span>{faq.q}</span>
+                  </span>
+                  {isOpen ? <ChevronUp className="w-4 h-4 text-cyan-600 transition-transform" /> : <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-cyan-600 transition-transform" />}
+                </button>
 
-              {expandedFaq === idx && (
-                <div className="px-4 pb-4 text-slate-600 leading-relaxed border-t border-blue-100 pt-3 text-[11px] animate-in fade-in duration-150">
-                  <strong className="text-cyan-700 font-mono font-bold">Defense Answer: </strong> {faq.a}
-                </div>
-              )}
-            </div>
-          ))}
+                {isOpen && (
+                  <div className="px-5 pb-4 text-slate-700 leading-relaxed border-t border-blue-100/80 pt-3 text-xs animate-in fade-in duration-200 bg-white/70">
+                    <strong className="text-cyan-800 font-mono font-bold">Defense Answer: </strong> {faq.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Security Audit Trail Table (Soft Glass Card) */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-4">
+      {/* Security Audit Trail Table (Soft Glass Card with Hover Highlights) */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/40 rounded-[2.5rem] p-7 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 hover:shadow-2xl hover:shadow-cyan-500/15 transition-all duration-300 transform hover:-translate-y-1 space-y-4">
         <div className="flex items-center justify-between border-b border-blue-100 pb-3">
           <h3 className="text-xs font-bold text-blue-950 uppercase tracking-wider font-mono flex items-center space-x-2">
-            <Terminal className="w-4 h-4 text-cyan-600" />
+            <Terminal className="w-4 h-4 text-cyan-600 animate-pulse" />
             <span>Security & Priority Audit Trail</span>
           </h3>
-          <span className="text-[10px] text-slate-500 font-mono">Real-time syslog stream</span>
+          <span className="text-[10px] text-slate-500 font-mono bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
+            Real-time syslog stream
+          </span>
         </div>
 
-        <div className="overflow-x-auto rounded-2xl border border-blue-100">
+        <div className="overflow-x-auto rounded-2xl border border-blue-100 shadow-inner">
           <table className="w-full text-left text-xs font-mono">
             <thead className="bg-blue-50/80 text-blue-900/70 font-mono text-[10px] uppercase border-b border-blue-100 tracking-wider">
               <tr>
@@ -206,18 +218,21 @@ export default function CyberSecurityLogs() {
                 const isAlert = log.status === 'ALERT' || log.status === 'DENIED';
                 const isSuccess = log.status === 'SUCCESS';
                 return (
-                  <tr key={log.id} className="hover:bg-blue-50/60 transition-all">
-                    <td className="py-2.5 px-3.5 font-mono text-[10px] text-slate-500">
+                  <tr 
+                    key={log.id} 
+                    className="hover:bg-blue-100/70 hover:shadow-sm transition-all duration-150 group cursor-default"
+                  >
+                    <td className="py-2.5 px-3.5 font-mono text-[10px] text-slate-500 group-hover:text-blue-950 transition-colors">
                       {new Date(log.timestamp).toLocaleTimeString()}
                     </td>
-                    <td className="py-2.5 px-3.5 font-mono font-medium text-blue-950">
+                    <td className="py-2.5 px-3.5 font-mono font-medium text-blue-950 group-hover:text-cyan-900 transition-colors">
                       {log.username}
                     </td>
-                    <td className="py-2.5 px-3.5 font-mono text-[11px] text-cyan-700 font-bold">
+                    <td className="py-2.5 px-3.5 font-mono text-[11px] text-cyan-700 font-bold group-hover:text-cyan-900 transition-colors">
                       {log.action}
                     </td>
                     <td className="py-2.5 px-3.5">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold inline-flex items-center space-x-1 ${
+                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold inline-flex items-center space-x-1 transition-transform group-hover:scale-105 ${
                         isSuccess ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-sm' :
                         isAlert ? 'bg-rose-100 text-rose-700 border border-rose-200 shadow-[0_0_8px_rgba(244,63,94,0.3)] animate-pulse' :
                         'bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-[0_0_8px_rgba(99,102,241,0.25)]'
@@ -229,7 +244,7 @@ export default function CyberSecurityLogs() {
                         <span>{log.status}</span>
                       </span>
                     </td>
-                    <td className="py-2.5 px-3.5 text-[11px] text-slate-600 truncate max-w-sm font-mono">
+                    <td className="py-2.5 px-3.5 text-[11px] text-slate-600 group-hover:text-slate-900 truncate max-w-sm font-mono transition-colors">
                       {log.details}
                     </td>
                   </tr>

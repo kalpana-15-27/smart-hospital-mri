@@ -16,7 +16,10 @@ import {
   Send,
   Building2,
   Mail,
-  FileCheck
+  FileCheck,
+  Eye,
+  EyeOff,
+  Sparkles
 } from 'lucide-react';
 
 export default function Login({ onLoginSuccess, onBackToLanding }) {
@@ -26,11 +29,12 @@ export default function Login({ onLoginSuccess, onBackToLanding }) {
   const [authMode, setAuthMode] = useState('signin');
 
   // Role selector: 'DOCTOR' | 'ADMIN'
-  const [selectedRole, setSelectedRole] = useState('DOCTOR');
+  const [selectedRole, setSelectedRole] = useState('ADMIN');
 
   // Form states
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -49,6 +53,20 @@ export default function Login({ onLoginSuccess, onBackToLanding }) {
   const [reqStaffId, setReqStaffId] = useState('');
   const [requestSubmitted, setRequestSubmitted] = useState(false);
 
+  const handleAutofillAdmin = () => {
+    setSelectedRole('ADMIN');
+    setUsername('admin1');
+    setPassword('kalp1524');
+    setErrorMsg('');
+  };
+
+  const handleAutofillDoctor = () => {
+    setSelectedRole('DOCTOR');
+    setUsername('dr_sharma');
+    setPassword('sarah@15');
+    setErrorMsg('');
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -58,20 +76,24 @@ export default function Login({ onLoginSuccess, onBackToLanding }) {
     const trimmedUser = username.trim();
     const trimmedPass = password.trim();
 
-    // Enforce initial bootstrapping rules
-    // Admin valid login: 'admin1' / 'kalp1524'
-    if (selectedRole === 'ADMIN' && trimmedUser === 'admin1' && trimmedPass !== 'kalp1524') {
+    if (!trimmedUser || !trimmedPass) {
       setLoading(false);
-      setErrorMsg('Invalid Credentials. Please check your admin username and password.');
+      setErrorMsg('Please enter both username and password.');
       return;
     }
 
     try {
       const res = await api.login(trimmedUser, trimmedPass);
 
-      // Verify role alignment
-      if (res.user && res.user.role !== selectedRole) {
-        throw new Error(`Role mismatch. This account is registered as ${res.user.role}, not ${selectedRole}.`);
+      // Verify role alignment gracefully
+      const isDoctorRole = ['DOCTOR', 'RADIOLOGIST'].includes(res.user.role);
+      const isAdminRole = ['ADMIN', 'NETWORK_ADMIN'].includes(res.user.role);
+
+      if (selectedRole === 'ADMIN' && !isAdminRole) {
+        throw new Error(`Account "${res.user.username}" is registered as ${res.user.role}. Please switch to the Doctor tab to sign in.`);
+      }
+      if (selectedRole === 'DOCTOR' && !isDoctorRole) {
+        throw new Error(`Account "${res.user.username}" is registered as ${res.user.role}. Please switch to the Admin tab to sign in.`);
       }
 
       localStorage.setItem('token', res.access_token);
@@ -79,7 +101,7 @@ export default function Login({ onLoginSuccess, onBackToLanding }) {
         username: res.user.username,
         name: res.user.full_name || res.user.username,
         role: res.user.role,
-        department: res.user.department || (res.user.role === 'ADMIN' ? 'Hospital Administration' : 'Radiology & Imaging'),
+        department: res.user.department || (isAdminRole ? 'Hospital Administration' : 'Radiology & Imaging'),
         badge: `${res.user.role} Verified`
       };
       setCurrentUser(userProfile);
@@ -98,9 +120,12 @@ export default function Login({ onLoginSuccess, onBackToLanding }) {
         setMustChangePassword(true);
         setErrorMsg('');
       } else {
-        // Clinical friendly message for unprovisioned doctor accounts
-        if (selectedRole === 'DOCTOR' && (err.status === 401 || err.message?.includes('Incorrect username'))) {
-          setErrorMsg('Invalid Credentials. Doctor accounts must be provisioned by Hospital Administration.');
+        if (err.status === 401 || err.message?.includes('Incorrect username or password')) {
+          setErrorMsg(
+            selectedRole === 'ADMIN'
+              ? 'Invalid Credentials. Please verify the admin username and password (or click the Autofill button below).'
+              : 'Invalid Credentials. Please check your doctor username and password.'
+          );
         } else {
           setErrorMsg(err.message || 'Invalid Credentials');
         }
@@ -316,38 +341,78 @@ export default function Login({ onLoginSuccess, onBackToLanding }) {
               </div>
 
               <div>
-                <label className="block text-blue-950 font-semibold mb-1.5">Password</label>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="block text-blue-950 font-semibold">Password</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-[11px] text-cyan-700 hover:text-blue-950 font-medium flex items-center space-x-1 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    <span>{showPassword ? 'Hide' : 'Show'}</span>
+                  </button>
+                </div>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-blue-400 absolute left-3.5 top-3.5" />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="w-full bg-white/70 border border-blue-100 rounded-2xl pl-10 pr-4 py-3 text-blue-950 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all font-medium"
+                    className="w-full bg-white/70 border border-blue-100 rounded-2xl pl-10 pr-10 py-3 text-blue-950 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all font-medium font-mono"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-3.5 text-blue-400 hover:text-cyan-700 transition"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-bold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all flex items-center justify-center space-x-2 mt-2 disabled:opacity-50"
+                className="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-bold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:ring-2 hover:ring-cyan-400/40 transition-all duration-300 transform hover:scale-[1.01] active:scale-95 flex items-center justify-center space-x-2 mt-2 disabled:opacity-50"
               >
                 <span>{loading ? 'Authenticating...' : `Sign In as ${selectedRole === 'ADMIN' ? 'Admin' : 'Doctor'}`}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Bootstrap Hint / Security Note */}
+            {/* Clickable One-Click Autofill Credentials Pill */}
             <div className="pt-3 border-t border-blue-100 text-center">
-              <div className="inline-flex items-center space-x-1.5 text-[11px] text-blue-700/80 bg-blue-50/80 px-3 py-1 rounded-full border border-blue-200/50">
-                <Shield className="w-3.5 h-3.5 text-cyan-600" />
-                <span>
-                  Bootstrap Root: <strong className="font-mono text-blue-950">admin1</strong> / <strong className="font-mono text-blue-950">kalp1524</strong>
-                </span>
-              </div>
+              {selectedRole === 'ADMIN' ? (
+                <button
+                  type="button"
+                  onClick={handleAutofillAdmin}
+                  className="group inline-flex items-center space-x-2 text-[11px] text-blue-800 bg-blue-50/90 hover:bg-cyan-50 hover:text-cyan-900 px-4 py-2 rounded-full border border-blue-200/80 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/40 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow"
+                >
+                  <Shield className="w-3.5 h-3.5 text-cyan-600 group-hover:rotate-12 transition-transform" />
+                  <span>
+                    Bootstrap Root: <strong className="font-mono text-blue-950 font-bold">admin1</strong> / <strong className="font-mono text-blue-950 font-bold">kalp1524</strong>
+                  </span>
+                  <span className="text-[10px] bg-cyan-100 text-cyan-800 font-bold px-2 py-0.5 rounded-full ml-1 group-hover:bg-cyan-600 group-hover:text-white transition-colors">
+                    Click to Autofill
+                  </span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleAutofillDoctor}
+                  className="group inline-flex items-center space-x-2 text-[11px] text-blue-800 bg-blue-50/90 hover:bg-cyan-50 hover:text-cyan-900 px-4 py-2 rounded-full border border-blue-200/80 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/40 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow"
+                >
+                  <Stethoscope className="w-3.5 h-3.5 text-cyan-600 group-hover:rotate-12 transition-transform" />
+                  <span>
+                    Clinical Doctor: <strong className="font-mono text-blue-950 font-bold">dr_sharma</strong> / <strong className="font-mono text-blue-950 font-bold">sarah@15</strong>
+                  </span>
+                  <span className="text-[10px] bg-cyan-100 text-cyan-800 font-bold px-2 py-0.5 rounded-full ml-1 group-hover:bg-cyan-600 group-hover:text-white transition-colors">
+                    Click to Autofill
+                  </span>
+                </button>
+              )}
             </div>
 
           </div>

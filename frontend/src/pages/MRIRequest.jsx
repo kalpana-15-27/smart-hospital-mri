@@ -256,18 +256,18 @@ export default function MRIRequest({ setActiveTab, setSelectedPacket, selectedPa
                 <button
                   type="button"
                   onClick={() => handleUrgencyChange('EMERGENCY')}
-                  className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                  className={`p-4 rounded-2xl border text-left transition-all duration-300 transform hover:-translate-y-1.5 hover:scale-[1.02] relative overflow-hidden ${
                     isEmergency
-                      ? 'bg-rose-50/90 border-rose-300 ring-2 ring-rose-400 shadow-md shadow-rose-500/20'
-                      : 'bg-white/60 border-blue-100 hover:bg-rose-50/40 text-slate-600'
+                      ? 'bg-rose-50/90 border-rose-300 ring-2 ring-rose-500 shadow-xl shadow-rose-500/25 -translate-y-0.5'
+                      : 'bg-white/60 hover:bg-white border-blue-100 hover:border-rose-200 hover:ring-2 hover:ring-rose-400/50 hover:shadow-lg hover:shadow-rose-500/15 text-slate-600'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className={`font-bold tracking-tight text-xs ${isEmergency ? 'text-rose-700' : 'text-slate-700'}`}>
                       EMERGENCY
                     </span>
-                    <span className={`w-2 h-2 rounded-full ${
-                      isEmergency ? 'bg-rose-500 animate-pulse' : 'bg-slate-300'
+                    <span className={`w-2.5 h-2.5 rounded-full ${
+                      isEmergency ? 'bg-rose-500 animate-pulse ring-2 ring-rose-200' : 'bg-slate-300'
                     }`}></span>
                   </div>
                   <div className={`text-[10px] font-mono font-semibold ${isEmergency ? 'text-rose-900' : 'text-slate-500'}`}>
@@ -282,18 +282,18 @@ export default function MRIRequest({ setActiveTab, setSelectedPacket, selectedPa
                 <button
                   type="button"
                   onClick={() => handleUrgencyChange('URGENT')}
-                  className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                  className={`p-4 rounded-2xl border text-left transition-all duration-300 transform hover:-translate-y-1.5 hover:scale-[1.02] relative overflow-hidden ${
                     isUrgent
-                      ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-400 shadow-md shadow-amber-500/20'
-                      : 'bg-white/60 border-blue-100 hover:bg-amber-50/40 text-slate-600'
+                      ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-500 shadow-xl shadow-amber-500/25 -translate-y-0.5'
+                      : 'bg-white/60 hover:bg-white border-blue-100 hover:border-amber-200 hover:ring-2 hover:ring-amber-400/50 hover:shadow-lg hover:shadow-amber-500/15 text-slate-600'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className={`font-bold tracking-tight text-xs ${isUrgent ? 'text-amber-700' : 'text-slate-700'}`}>
                       URGENT
                     </span>
-                    <span className={`w-2 h-2 rounded-full ${
-                      isUrgent ? 'bg-amber-500' : 'bg-slate-300'
+                    <span className={`w-2.5 h-2.5 rounded-full ${
+                      isUrgent ? 'bg-amber-500 animate-pulse ring-2 ring-amber-200' : 'bg-slate-300'
                     }`}></span>
                   </div>
                   <div className={`text-[10px] font-mono font-semibold ${isUrgent ? 'text-amber-900' : 'text-slate-500'}`}>
@@ -308,18 +308,18 @@ export default function MRIRequest({ setActiveTab, setSelectedPacket, selectedPa
                 <button
                   type="button"
                   onClick={() => handleUrgencyChange('NORMAL')}
-                  className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden ${
+                  className={`p-4 rounded-2xl border text-left transition-all duration-300 transform hover:-translate-y-1.5 hover:scale-[1.02] relative overflow-hidden ${
                     formData.urgency === 'NORMAL'
-                      ? 'bg-cyan-50/90 border-cyan-300 ring-2 ring-cyan-400 shadow-md shadow-cyan-500/20'
-                      : 'bg-white/60 border-blue-100 hover:bg-cyan-50/40 text-slate-600'
+                      ? 'bg-cyan-50/90 border-cyan-300 ring-2 ring-cyan-500 shadow-xl shadow-cyan-500/25 -translate-y-0.5'
+                      : 'bg-white/60 hover:bg-white border-blue-100 hover:border-cyan-200 hover:ring-2 hover:ring-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/15 text-slate-600'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className={`font-bold tracking-tight text-xs ${formData.urgency === 'NORMAL' ? 'text-cyan-700' : 'text-slate-700'}`}>
                       NORMAL
                     </span>
-                    <span className={`w-2 h-2 rounded-full ${
-                      formData.urgency === 'NORMAL' ? 'bg-cyan-500' : 'bg-slate-300'
+                    <span className={`w-2.5 h-2.5 rounded-full ${
+                      formData.urgency === 'NORMAL' ? 'bg-cyan-500 animate-pulse ring-2 ring-cyan-200' : 'bg-slate-300'
                     }`}></span>
                   </div>
                   <div className={`text-[10px] font-mono font-semibold ${formData.urgency === 'NORMAL' ? 'text-cyan-900' : 'text-slate-500'}`}>
@@ -339,7 +339,7 @@ export default function MRIRequest({ setActiveTab, setSelectedPacket, selectedPa
               <select
                 value={formData.mri_type}
                 onChange={(e) => setFormData({ ...formData, mri_type: e.target.value })}
-                className="w-full bg-white/70 border border-blue-100 rounded-2xl px-4 py-3 text-blue-950 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all cursor-pointer"
+                className="w-full bg-white/70 hover:bg-white border border-blue-100 hover:border-cyan-200 hover:ring-2 hover:ring-cyan-400/30 rounded-2xl px-4 py-3 text-blue-950 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all cursor-pointer"
               >
                 <option value="Emergency Brain Trauma & Stroke Protocol">Emergency Brain Trauma & Stroke Protocol (350 MB)</option>
                 <option value="Cardiac Stress & Viability MRI">Cardiac Stress & Viability MRI (280 MB)</option>
@@ -357,23 +357,23 @@ export default function MRIRequest({ setActiveTab, setSelectedPacket, selectedPa
                 required
                 value={formData.clinical_reason}
                 onChange={(e) => setFormData({ ...formData, clinical_reason: e.target.value })}
-                className="w-full bg-white/70 border border-blue-100 rounded-2xl px-4 py-3 text-blue-950 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all font-medium"
+                className="w-full bg-white/70 hover:bg-white border border-blue-100 hover:border-cyan-200 hover:ring-2 hover:ring-cyan-400/30 rounded-2xl px-4 py-3 text-blue-950 placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:bg-white transition-all font-medium"
               />
             </div>
 
-            {/* Submit Button (Pill Styled) */}
+            {/* Submit Button (Pill Styled with Hover Float & Glow) */}
             <button
               type="submit"
               disabled={submitting}
-              className={`w-full py-3.5 rounded-full font-bold transition-all flex items-center justify-center space-x-2 mt-2 text-white shadow-lg ${
+              className={`w-full py-3.5 rounded-full font-bold transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.01] active:scale-95 flex items-center justify-center space-x-2 mt-2 text-white shadow-lg ${
                 isEmergency 
-                  ? 'bg-gradient-to-r from-rose-500 to-rose-600 shadow-rose-500/25 hover:shadow-rose-500/40' 
+                  ? 'bg-gradient-to-r from-rose-500 to-rose-600 shadow-rose-500/25 hover:shadow-2xl hover:shadow-rose-500/50 hover:ring-2 hover:ring-rose-300' 
                   : isUrgent 
-                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/25 hover:shadow-amber-500/40' 
-                  : 'bg-gradient-to-r from-cyan-400 to-blue-500 shadow-blue-500/25 hover:shadow-blue-500/40'
+                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/25 hover:shadow-2xl hover:shadow-amber-500/50 hover:ring-2 hover:ring-amber-300' 
+                  : 'bg-gradient-to-r from-cyan-400 to-blue-500 shadow-blue-500/25 hover:shadow-2xl hover:shadow-cyan-500/50 hover:ring-2 hover:ring-cyan-300'
               }`}
             >
-              <Zap className="w-4 h-4" />
+              <Zap className="w-4 h-4 animate-pulse" />
               <span>{submitting ? 'Scheduling Scan...' : `Schedule ${formData.urgency} Scan`}</span>
             </button>
 

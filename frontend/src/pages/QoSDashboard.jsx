@@ -204,9 +204,9 @@ export default function QoSDashboard() {
 
         <button
           onClick={downloadCSV}
-          className="px-5 py-2.5 bg-white border border-blue-200/80 text-blue-700 hover:text-blue-950 rounded-full text-xs font-bold flex items-center space-x-2 self-start sm:self-auto transition-all shadow-sm hover:shadow"
+          className="px-5 py-2.5 bg-white hover:bg-cyan-50 border border-blue-200/80 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/40 text-blue-700 hover:text-blue-950 rounded-full text-xs font-bold flex items-center space-x-2 self-start sm:self-auto transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 shadow-sm hover:shadow-md"
         >
-          <Download className="w-4 h-4 text-cyan-500" />
+          <Download className="w-4 h-4 text-cyan-500 animate-bounce" />
           <span>Export Benchmark (CSV)</span>
         </button>
       </div>
@@ -215,14 +215,14 @@ export default function QoSDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         
         {/* Speedup */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 relative overflow-hidden">
+        <div className="group bg-white/90 backdrop-blur-xl border border-white/60 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/50 rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.015] relative overflow-hidden cursor-pointer">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">Delivery Acceleration</span>
-            <div className="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center">
+            <span className="text-xs text-slate-500 font-medium group-hover:text-cyan-800 transition-colors">Delivery Acceleration</span>
+            <div className="w-8 h-8 rounded-xl bg-cyan-100 group-hover:bg-cyan-500 text-cyan-600 group-hover:text-white flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 text-3xl font-black text-cyan-700 font-mono tracking-tight">
+          <div className="mt-3 text-3xl font-black text-cyan-700 font-mono tracking-tight group-hover:text-cyan-900 transition-colors">
             92.9% Faster
           </div>
           <div className="text-xs text-slate-500 mt-2 font-mono flex items-center space-x-1.5">
@@ -234,14 +234,14 @@ export default function QoSDashboard() {
         </div>
 
         {/* Latency Saved */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 relative overflow-hidden">
+        <div className="group bg-white/90 backdrop-blur-xl border border-white/60 hover:border-emerald-300 hover:ring-2 hover:ring-emerald-400/50 rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.015] relative overflow-hidden cursor-pointer">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">Bufferbloat Prevented</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+            <span className="text-xs text-slate-500 font-medium group-hover:text-emerald-800 transition-colors">Bufferbloat Prevented</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 group-hover:bg-emerald-500 text-emerald-600 group-hover:text-white flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
               <Clock className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 text-3xl font-black text-emerald-700 font-mono tracking-tight">
+          <div className="mt-3 text-3xl font-black text-emerald-700 font-mono tracking-tight group-hover:text-emerald-950 transition-colors">
             237 ms Saved
           </div>
           <div className="text-xs text-slate-500 mt-2">
@@ -250,14 +250,14 @@ export default function QoSDashboard() {
         </div>
 
         {/* Drop Rate */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 relative overflow-hidden">
+        <div className="group bg-white/90 backdrop-blur-xl border border-white/60 hover:border-indigo-300 hover:ring-2 hover:ring-indigo-400/50 rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.015] relative overflow-hidden cursor-pointer">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">Emergency Packet Loss</span>
-            <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+            <span className="text-xs text-slate-500 font-medium group-hover:text-indigo-800 transition-colors">Emergency Packet Loss</span>
+            <div className="w-8 h-8 rounded-xl bg-indigo-100 group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
               <TrendingDown className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 text-3xl font-black text-indigo-700 font-mono tracking-tight">
+          <div className="mt-3 text-3xl font-black text-indigo-700 font-mono tracking-tight group-hover:text-indigo-950 transition-colors">
             0.0% Drops
           </div>
           <div className="text-xs text-slate-500 mt-2">
@@ -271,7 +271,7 @@ export default function QoSDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Graph 1: Delay */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-[2.5rem] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 space-y-4">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 hover:border-cyan-300 hover:ring-2 hover:ring-cyan-400/40 rounded-[2.5rem] p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] shadow-blue-900/10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 space-y-4">
           <div className="flex items-center justify-between border-b border-blue-100 pb-3">
             <h2 className="text-xs font-bold text-blue-950 uppercase tracking-wider font-mono">
               Transfer Duration (Seconds) vs Congestion

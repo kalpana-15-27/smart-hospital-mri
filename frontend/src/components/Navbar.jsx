@@ -158,20 +158,20 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             
             {/* Logo & Health-Tech Brand Identity */}
-            <div className="flex items-center space-x-3.5">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-500 flex items-center justify-center shadow-md shadow-blue-500/20 text-white">
-                <HeartPulse className="w-5 h-5" />
+            <div className="flex items-center space-x-3.5 group cursor-pointer">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-500 flex items-center justify-center shadow-md shadow-blue-500/20 text-white transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-lg group-hover:shadow-cyan-500/30">
+                <HeartPulse className="w-5 h-5 animate-pulse" />
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="font-bold text-base tracking-tight text-blue-950">
+                  <span className="font-bold text-base tracking-tight text-blue-950 group-hover:text-cyan-700 transition-colors">
                     Smart Hospital MRI QoS
                   </span>
-                  <span className="bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold shadow-sm">
+                  <span className="bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold shadow-sm animate-pulse">
                     ACTIVE
                   </span>
                 </div>
-                <p className="text-xs text-blue-700/70 hidden sm:block">
+                <p className="text-xs text-blue-700/70 hidden sm:block font-medium">
                   Clinical Priority Telemetry &bull; Layer 3 QoS DiffServ
                 </p>
               </div>
@@ -182,9 +182,9 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center space-x-2.5 bg-white border border-blue-200/80 px-4 py-2 rounded-full text-sm transition-all shadow-sm hover:shadow-md"
+                  className="flex items-center space-x-2.5 bg-white hover:bg-cyan-50/50 border border-blue-200/80 hover:border-cyan-300 px-4 py-2 rounded-full text-sm transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-[1.02] shadow-sm hover:shadow-lg hover:shadow-cyan-500/15 hover:ring-2 hover:ring-cyan-400/40"
                 >
-                  <div className={`w-2.5 h-2.5 rounded-full ring-2 ring-white ${
+                  <div className={`w-2.5 h-2.5 rounded-full ring-2 ring-white animate-pulse ${
                     currentUser.role === 'DOCTOR' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]' :
                     currentUser.role === 'NETWORK_ADMIN' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' :
                     currentUser.role === 'RADIOLOGIST' ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]' : 
@@ -194,20 +194,20 @@ export default function Navbar() {
                     <div className="text-xs font-bold text-blue-950 tracking-tight">{currentUser.name}</div>
                     <div className="text-[10px] text-blue-600 font-mono font-medium">{currentUser.role}</div>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${dropdownOpen ? 'rotate-180 text-cyan-600' : ''}`} />
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-2xl border border-blue-100 rounded-2xl shadow-xl shadow-blue-900/10 py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-2xl border border-cyan-100 rounded-2xl shadow-2xl shadow-blue-900/15 ring-2 ring-cyan-400/20 py-2 z-50 animate-in fade-in zoom-in-95 duration-200">
                     <div className="px-3.5 py-2 border-b border-blue-100 text-[10px] font-bold text-blue-900/60 uppercase tracking-wider font-mono flex items-center justify-between">
                       <span>Clinical Profile</span>
-                      <span className="text-cyan-600 font-bold">{currentUser.role}</span>
+                      <span className="text-cyan-600 font-bold bg-cyan-50 px-2 py-0.5 rounded-full border border-cyan-200">{currentUser.role}</span>
                     </div>
 
-                    <div className="p-3 border-b border-blue-100 text-xs">
+                    <div className="p-3 border-b border-blue-100 text-xs bg-gradient-to-r from-blue-50/50 to-transparent">
                       <div className="font-bold text-blue-950">{currentUser.name}</div>
                       <div className="text-slate-500 text-[11px] mt-0.5">{currentUser.department || 'Clinical Staff'}</div>
-                      <div className="text-[10px] font-mono text-blue-600 mt-1">ID: @{currentUser.username}</div>
+                      <div className="text-[10px] font-mono text-cyan-700 mt-1 font-semibold">ID: @{currentUser.username}</div>
                     </div>
 
                     <div className="px-3.5 py-2 text-[10px] font-bold text-blue-900/60 uppercase tracking-wider font-mono flex items-center justify-between">
@@ -215,25 +215,25 @@ export default function Navbar() {
                       <span className="text-xs font-mono font-normal text-slate-400">Requires Password</span>
                     </div>
 
-                    <div className="p-1.5 space-y-1 max-h-60 overflow-y-auto">
+                    <div className="p-1.5 space-y-1.5 max-h-60 overflow-y-auto">
                       {allUsers.map((user) => {
                         const isCurrent = currentUser.username === user.username;
                         return (
                           <button
                             key={user.username}
                             onClick={() => handleOpenConnect(user)}
-                            className={`w-full px-3 py-2 text-left text-xs flex items-center space-x-2.5 rounded-xl transition-all ${
+                            className={`group w-full px-3 py-2 text-left text-xs flex items-center space-x-2.5 rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 hover:scale-[1.01] ${
                               isCurrent 
-                                ? 'bg-blue-50 text-blue-950 border border-blue-200 font-bold' 
-                                : 'text-slate-600 hover:bg-blue-50/70 hover:text-blue-950 border border-transparent'
+                                ? 'bg-blue-50 text-blue-950 border border-cyan-300 ring-1 ring-cyan-400/40 font-bold shadow-sm' 
+                                : 'text-slate-600 hover:bg-white hover:text-blue-950 border border-transparent hover:border-cyan-200 hover:ring-2 hover:ring-cyan-400/50 hover:shadow-md hover:shadow-cyan-500/10'
                             }`}
                           >
-                            <div className="w-7 h-7 rounded-lg bg-blue-100/70 text-cyan-600 flex items-center justify-center flex-shrink-0">
-                              <Wifi className="w-3.5 h-3.5" />
+                            <div className="w-7 h-7 rounded-lg bg-blue-100/70 group-hover:bg-cyan-500 group-hover:text-white text-cyan-600 flex items-center justify-center flex-shrink-0 transition-colors">
+                              <Wifi className="w-3.5 h-3.5 group-hover:animate-pulse" />
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="font-medium truncate flex items-center justify-between">
-                                <span className="truncate">{user.name}</span>
+                                <span className="truncate group-hover:text-cyan-800 transition-colors">{user.name}</span>
                                 {isCurrent && (
                                   <span className="text-[9px] bg-cyan-100 text-cyan-800 font-bold px-1.5 py-0.2 rounded-full ml-1">
                                     Connected
@@ -255,7 +255,7 @@ export default function Navbar() {
                           setDropdownOpen(false);
                           logout();
                         }}
-                        className="w-full px-3 py-2 text-left text-xs flex items-center space-x-2 rounded-xl text-rose-600 hover:bg-rose-50 transition font-medium"
+                        className="w-full px-3 py-2 text-left text-xs flex items-center space-x-2 rounded-xl text-rose-600 hover:bg-rose-50 hover:ring-1 hover:ring-rose-300 hover:shadow-sm transition-all duration-200 font-medium transform hover:-translate-y-0.5"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign Out Current Session</span>

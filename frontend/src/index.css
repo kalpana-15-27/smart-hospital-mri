@@ -34,9 +34,133 @@
   }
 }
 
+@keyframes gentle-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-gentle-float {
+  animation: gentle-float 3.5s ease-in-out infinite;
+}
+
 .emergency-glow {
   animation: emergency-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Hover Float & Perimeter Highlight Animations */
+.hover-float {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.hover-float:hover {
+  transform: translateY(-3px) scale(1.012);
+  box-shadow: 0 14px 32px -8px rgba(6, 182, 212, 0.28), 0 0 0 2px rgba(6, 182, 212, 0.45);
+}
+
+.hover-float-sm {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.hover-float-sm:hover {
+  transform: translateY(-2px) scale(1.008);
+  box-shadow: 0 10px 24px -6px rgba(14, 165, 233, 0.22), 0 0 0 1.5px rgba(14, 165, 233, 0.4);
+}
+
+.hover-glow-rose:hover {
+  transform: translateY(-3px) scale(1.012);
+  box-shadow: 0 14px 32px -8px rgba(244, 63, 94, 0.35), 0 0 0 2px rgba(244, 63, 94, 0.55);
+}
+
+.hover-glow-amber:hover {
+  transform: translateY(-3px) scale(1.012);
+  box-shadow: 0 14px 32px -8px rgba(245, 158, 11, 0.35), 0 0 0 2px rgba(245, 158, 11, 0.55);
+}
+
+.hover-glow-cyan:hover {
+  transform: translateY(-3px) scale(1.012);
+  box-shadow: 0 14px 32px -8px rgba(6, 182, 212, 0.35), 0 0 0 2px rgba(6, 182, 212, 0.55);
+}
+
+.hover-glow-emerald:hover {
+  transform: translateY(-3px) scale(1.012);
+  box-shadow: 0 14px 32px -8px rgba(16, 185, 129, 0.35), 0 0 0 2px rgba(16, 185, 129, 0.55);
+}
+
+.interactive-card {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px -10px rgba(14, 165, 233, 0.22), 0 0 0 2px rgba(56, 189, 248, 0.45);
+}
+
+@keyframes scan-beam {
+  0%, 100% {
+    top: 5%;
+    opacity: 0.3;
+  }
+  50% {
+    top: 90%;
+    opacity: 0.9;
+  }
+}
+
+.animate-scan-beam {
+  animation: scan-beam 3s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 18s linear infinite;
+}
+
+@keyframes spin-reverse-slow {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 14s linear infinite;
+}
+
+@keyframes float-packet {
+  0% {
+    transform: translateX(-10px) translateY(0px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120px) translateY(-5px);
+    opacity: 0;
+  }
+}
+
+.animate-float-packet {
+  animation: float-packet 2.5s ease-in-out infinite;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
